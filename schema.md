@@ -176,7 +176,7 @@ This describes the basic MIDI implementation of the device.
 
 Field Name | Type | Description
 ---|:---:|---
-<a name="chartMidiChannels"></a>midiChannels | [RTRange Object](#RTRangeObject) | The range of MIDI channels that the device transmits, exports, responds to, and/or imports. Devices using extended channel systems via multiple cables or input/output ports should list the total number of channels in the appropriate “Transmitted” or “Recognized” columns and should use the “Remarks” column to indicate the terminology used by the device to identify the extra channels (i.e., “A1 - A16, B1 - B-16”)
+<a name="chartMidiChannels"></a>midiChannels | [RTMultiRange Object](#RTMultiRangeObject) | The range of MIDI channels that the device transmits, exports, responds to, and/or imports. Devices using extended channel systems via multiple cables or input/output ports should list the total number of channels in the appropriate “Transmitted” or “Recognized” columns and should use the “Remarks” column to indicate the terminology used by the device to identify the extra channels (i.e., “A1 - A16, B1 - B-16”)
 <a name="chartNoteNumbers"></a>noteNumbers | [RTRange Object](#RTRangeObject) | The total range of transmitted or recognized notes. 
 <a name="chartProgramChange"></a>programChange | [RTRange Object](#RTRangeObject) | Indicate the range of Program Change numbers which are transmitted and/or recognized. If not implemented, enter a “No” in the appropriate column.
 <a name="chartBankSelect"></a>bankSelect | [RTBoolean Object](#RTBooleanObject) | Use a “Yes” or “No” to indicate whether or not the device correctly responds to Bank Select messages as per the MIDI 1.0 Specification. Devices that respond only to Bank Select MSB (cc #0) but not to the LSB (cc #32) should place a "No" in the “Recognized” column and should indicate this in the “Remarks” column. If the device does correctly respond to Bank Select messages, use the “Remarks” column to indicate what banks or ranges of banks are available in the device. If certain banks are accessible only by MIDI (and not by front panel user control), these should be listed in the “Remarks” column.
@@ -219,6 +219,107 @@ Field Pattern | Type | Description
 {
   
   
+}
+```
+
+#### <a name="RTMultiRangeObject"></a>RTMultiRange Object
+
+Object for describing range in the Transmit/Export, Recognize/Import and Remarks columns in the MIDI Implementation Chart. Except this can have multiple ranges for different groups.
+
+##### Fixed Fields
+
+Field Name | Type | Description
+---|:---:|---
+<a name="RTRangeTransmit"></a>transmit | [[Range Object](#RangeObject)] | The upper and lower limits.
+<a name="RTRangeRecognize"></a>recognize | [[Range Object](#RangeObject)] | The upper and lower limits.
+<a name="RTRangeRemarks"></a>remarks | `string` | Any further Information.
+
+##### Patterned Objects 
+
+Field Pattern | Type | Description
+---|:---:|---
+<a name="RTMultiRangeExtensions"></a>^x- | Any | Allows extensions to the MIS Schema. The field name MUST begin with `x-`, for example, `x-internal-id`. The value can be `null`, a primitive, an array or an object. 
+
+##### RTMultiRange Object Example:
+
+```js
+{
+  "transmit": [
+	  {
+		start:0,
+		stop:16,
+		group:"A",
+	  },
+	  {
+		start:0,
+		stop:16,
+		group:"B",
+	  }
+  ]
+}
+```
+
+#### <a name="RTRangeObject"></a>RTRange Object
+
+Object for describing range in the Transmit/Export, Recognize/Import and Remarks columns in the MIDI Implementation Chart
+
+##### Fixed Fields
+
+Field Name | Type | Description
+---|:---:|---
+<a name="RTRangeTransmit"></a>transmit | [Range Object](#RangeObject) | The upper and lower limts.
+<a name="RTRangeRecognize"></a>recognize | [Range Object](#RangeObject) | The upper and lower limts.
+<a name="RTRangeRemarks"></a>remarks | `string` | Any further Information.
+
+##### Patterned Objects 
+
+Field Pattern | Type | Description
+---|:---:|---
+<a name="RTRangeExtensions"></a>^x- | Any | Allows extensions to the MIS Schema. The field name MUST begin with `x-`, for example, `x-internal-id`. The value can be `null`, a primitive, an array or an object. 
+
+##### RTRange Object Example:
+
+```js
+{
+  "transmit": {
+	start:0,
+	stop:16,
+	group:"A",
+  },
+  "recognize": {
+	start:0,
+	stop:16,
+	group:"A",
+  },
+  "remarks": "A is uses MIDI output A"
+}
+```
+
+#### <a name="RangeObject"></a>Range Object
+
+Object for describing range.
+
+##### Fixed Fields
+
+Field Name | Type | Description
+---|:---:|---
+<a name="RangeStart"></a>start | `integer` | The lower limit.
+<a name="RangeStop"></a>stop | `integer` | The upper limit.
+<a name="RangeGroup"></a>group | `string` | The Group the range belongs to.
+
+##### Patterned Objects 
+
+Field Pattern | Type | Description
+---|:---:|---
+<a name="RangeExtensions"></a>^x- | Any | Allows extensions to the MIS Schema. The field name MUST begin with `x-`, for example, `x-internal-id`. The value can be `null`, a primitive, an array or an object. 
+
+##### Range Object Example:
+
+```js
+{
+	start:0,
+	stop:16,
+	group:"A",
 }
 ```
 
@@ -463,8 +564,8 @@ If we start with the first bit pair (14,6) we get 001111100 which converts to "1
   {
 	"byte": 0,
 	"length": 2,
-	"name": "number",
-	"format": "float",
+	"name": "Tempo",
+	"type": "number",
 	"bits": [14,6,".",3,0]
   },
   {
