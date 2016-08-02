@@ -201,10 +201,10 @@ Field Name | Type | Description
 <a name="chartStop"></a>stop | [RTBoolean Object](#RTBooleanObject) | Stop (Yes/No)   
 <a name="chartMTC"></a>MTC | [RTBoolean Object](#RTBooleanObject) | MIDI Time Code (Yes/No)  
 <a name="chartMMC"></a>MMC | [RTBoolean Object](#RTBooleanObject) | MIDI Machine Control (Yes/No)   
-<a name="chartGM"></a>GM | [`string`] | Indicate whether or not the device has a mode of operation which complies with any of the General MIDI specifications: General MIDI System Level 1 (GM), General MIDI System Level 2 (GM2) and/or General MIDI Lite (GM Lite). 
-<a name="chartDLS"></a>DLS | [`string`] | Indicate whether or not the device has a mode of operation that complies with any of the Downloadable Sounds specifications: DLS Level 1 (DLS) , DLS Level 2 (DLS2, including DLS 2.1 and DLS 2.2), and/or Mobile DLS.  It is recommended that manufacturers indicate in the Remarks column the means of receiving DLS data (i.e., specific physical format, device interface, or transport protocol, etc.) and, if a file system media is used, indicate in the Remarks column the exact format(s) supported (i.e., Windows, Mac OS, or Linux file system version, etc.). 
-<a name="chartSMF"></a>SMF | [`string`] | Indicate whether or not the device has a mode of operation that can play, import, and/or export any of the Standard MIDI File formats, and, if so, the formats(s) supported: format 0 (single track), format 1 (multitrack), and/or format 2 (multiple independent single-track patterns). If yes, it is also recommended that manufacturers indicate in the Remarks column the means of receiving SMF data (i.e., specific physical format, device interface, or transport protocol, etc.) and, if a file system media is used, indicate in the Remarks column the exact format(s) supported (i.e. Windows, Mac OS, or Linux file system version, etc.).  
-<a name="chartXMF"></a>XMF | [`string`] | Indicate whether or not the device has a mode of operation that can play, import, and/or export any of the officially defined XMF File Types: XMF Type 0, XMF Type 1, or Mobile XMF  (XMF Type 2). If the device uses the XMF Meta File Format in a manner that does not conform to any of the XMF File Type specifications, indicate this in the Remarks column. 
+<a name="chartGM"></a>GM | [`string`] | Indicate whether or not the device has a mode of operation which complies with any of the General MIDI specifications: General MIDI System Level 1 (`GM`), General MIDI System Level 2 (`GM2`) and/or General MIDI Lite (`GMLite`). 
+<a name="chartDLS"></a>DLS | [`string`] | Indicate whether or not the device has a mode of operation that complies with any of the Downloadable Sounds specifications: DLS Level 1 (`DLS`) , DLS Level 2 (`DLS2`, including DLS 2.1 and DLS 2.2), and/or `MobileDLS`.  It is recommended that manufacturers indicate in the Remarks column the means of receiving DLS data (i.e., specific physical format, device interface, or transport protocol, etc.) and, if a file system media is used, indicate in the Remarks column the exact format(s) supported (i.e., Windows, Mac OS, or Linux file system version, etc.). 
+<a name="chartSMF"></a>SMF | [`string`] | Indicate whether or not the device has a mode of operation that can play, import, and/or export any of the Standard MIDI File formats, and, if so, the formats(s) supported: format `0` (single track), format `1` (multitrack), and/or format `2` (multiple independent single-track patterns). If yes, it is also recommended that manufacturers indicate in the Remarks column the means of receiving SMF data (i.e., specific physical format, device interface, or transport protocol, etc.) and, if a file system media is used, indicate in the Remarks column the exact format(s) supported (i.e. Windows, Mac OS, or Linux file system version, etc.).  
+<a name="chartXMF"></a>XMF | [`string`] | Indicate whether or not the device has a mode of operation that can play, import, and/or export any of the officially defined XMF File Types: XMF Type `0`, XMF Type `1`, or Mobile XMF  (XMF Type `2`). If the device uses the XMF Meta File Format in a manner that does not conform to any of the XMF File Type specifications, indicate this in the Remarks column. 
 <a name="chartSPMIDI"></a>SPMIDI | [RTBoolean Object](#RTBooleanObject) | SP-MIDI compatible? (Yes/No) 
 
 ##### Patterned Objects 
@@ -303,8 +303,8 @@ Object for describing range.
 
 Field Name | Type | Description
 ---|:---:|---
-<a name="RangeStart"></a>start | `integer` | The lower limit.
-<a name="RangeStop"></a>stop | `integer` | The upper limit.
+<a name="RangeStart"></a>start | `integer` | **Required.** The lower limit.
+<a name="RangeStop"></a>stop | `integer` | **Required.** The upper limit.
 <a name="RangeGroup"></a>group | `string` | The Group the range belongs to.
 
 ##### Patterned Objects 
