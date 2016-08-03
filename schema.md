@@ -200,7 +200,8 @@ Field Name | Type | Description
 <a name="chartContinue"></a>continue | [RTBoolean Object](#RTBooleanObject) | Continue (Yes/No)   
 <a name="chartStop"></a>stop | [RTBoolean Object](#RTBooleanObject) | Stop (Yes/No)   
 <a name="chartMTC"></a>MTC | [RTBoolean Object](#RTBooleanObject) | MIDI Time Code (Yes/No)  
-<a name="chartMMC"></a>MMC | [RTBoolean Object](#RTBooleanObject) | MIDI Machine Control (Yes/No)   
+<a name="chartMMC"></a>MMC | [RTBoolean Object](#RTBooleanObject) | MIDI Machine Control (Yes/No)  
+<a name="chartMSC"></a>MSC | [RTBoolean Object](#RTBooleanObject) | MIDI Show Control messages 
 <a name="chartGM"></a>GM | [`string`] | Indicate whether or not the device has a mode of operation which complies with any of the General MIDI specifications: General MIDI System Level 1 (`GM`), General MIDI System Level 2 (`GM2`) and/or General MIDI Lite (`GMLite`). 
 <a name="chartDLS"></a>DLS | [`string`] | Indicate whether or not the device has a mode of operation that complies with any of the Downloadable Sounds specifications: DLS Level 1 (`DLS`) , DLS Level 2 (`DLS2`, including DLS 2.1 and DLS 2.2), and/or `MobileDLS`.  It is recommended that manufacturers indicate in the Remarks column the means of receiving DLS data (i.e., specific physical format, device interface, or transport protocol, etc.) and, if a file system media is used, indicate in the Remarks column the exact format(s) supported (i.e., Windows, Mac OS, or Linux file system version, etc.). 
 <a name="chartSMF"></a>SMF | [`string`] | Indicate whether or not the device has a mode of operation that can play, import, and/or export any of the Standard MIDI File formats, and, if so, the formats(s) supported: format `0` (single track), format `1` (multitrack), and/or format `2` (multiple independent single-track patterns). If yes, it is also recommended that manufacturers indicate in the Remarks column the means of receiving SMF data (i.e., specific physical format, device interface, or transport protocol, etc.) and, if a file system media is used, indicate in the Remarks column the exact format(s) supported (i.e. Windows, Mac OS, or Linux file system version, etc.).  
@@ -334,6 +335,7 @@ Field Name | Type | Description
 <a name="RTBooleanTransmit"></a>transmit | `boolean` | If not set as true then it assumed false.
 <a name="RTBooleanRecognize"></a>recognize | `boolean` | If not set as true then it assumed false.
 <a name="RTBooleanRemarks"></a>remarks | `string` | Any further Information.
+<a name="RTBooleanFunction"></a>function | `string` | Only used for CC messages where the Function provided does not much the standard Function name.
 
 ##### Patterned Objects 
 
@@ -359,9 +361,8 @@ This describes the controllers available for the MIDI device.
 
 Field Name | Type | Description
 ---|:---:|---
-<a name="controllerCC"></a>CC | [CC Object](#ccObject) | A description of the MIDI controller available
+<a name="controllerCC"></a>CC | [CCList Object](#ccListObject) | A description of the MIDI control change parameters available
 <a name="controllerNRPN"></a>NRPN | [NRPN Object](#nrpnObject) | NRPN messages
-<a name="controllerMSC"></a>MSC | [MSC Object](#mscObject) | MIDI Show Control messages
 <a name="controllerRPN00"></a>RPN00 | [RTBoolean Object](#RTBooleanObject) | RPN 00 (Pitch Bend Sensitivity) (Yes/No)
 <a name="controllerRPN01"></a>RPN01 | [RTBoolean Object](#RTBooleanObject) | RPN 01 (Channel Fine Tune) (Yes/No)
 <a name="controllerRPN02"></a>RPN02 | [RTBoolean Object](#RTBooleanObject) | RPN 02 (Channel Coarse Tune) (Yes/No)
@@ -380,10 +381,119 @@ Field Pattern | Type | Description
 
 ```js
 {
-  
+  'CC':{
+	'1':{
+		"transmitted":true
+		,"recognised":true
+	}
+  }
+  ,'NRPN':{
+	"0x05/0x07":{
+		"name":"Part 1 Motion Seq Type"
+		,"transmitted":true
+		,"recognised":true
+		,"map":["Off","Smooth","TrigHold"]
+		,"MSBOnly":true
+	  }
+  }
+  ,RPN00:{
+	"transmitted":true
+	,"recognised":true
+  }
   
 }
 ```
+
+
+#### <a name="ccListObject"></a>CC List Object
+
+A list of the MIDI control change parameters available.
+
+
+##### Patterned Objects 
+
+Field Pattern | Type | Description
+---|:---:|---
+<a name="ccnumcList"></a>/{ccNum} | [RTBoolean Object](#RTBooleanObject) | **Required.** A CC number between 0-127.
+<a name="ccListExtensions"></a>^x- | Any | Allows extensions to the MIS Schema. The field name MUST begin with `x-`, for example, `x-internal-id`. The value can be `null`, a primitive, an array or an object. 
+
+##### CC List Object Example:
+
+```js
+{
+  '1':{
+	"transmitted":true
+    ,"recognised":true
+  }
+  
+}
+```
+
+#### <a name="nrpnObject"></a>NRPN Object
+
+A list of the MIDI NRPN parameters available.
+
+
+##### Patterned Objects 
+
+Field Pattern | Type | Description
+---|:---:|---
+<a name="nrpnList"></a>{MSB}/{LSB} | [NRPN Item Object](#nrpnItemObject) | **Required.** This is the Hex of the NRPN MSB and LSB values.
+<a name="nrpnExtensions"></a>^x- | Any | Allows extensions to the MIS Schema. The field name MUST begin with `x-`, for example, `x-internal-id`. The value can be `null`, a primitive, an array or an object. 
+
+##### NRPN Object Example:
+
+```js
+{
+	"0x05/0x07":{
+		"name":"Part 1 Motion Seq Type"
+		,"transmitted":true
+		,"recognised":true
+		,"map":["Off","Smooth","TrigHold"]
+		,"MSBOnly":true
+	}
+}
+```
+
+
+#### <a name="nrpnItemObject"></a>NRPN Item Object
+
+Describes how to process each byte returned or sent in a Sysex Message.
+
+##### Fixed Fields
+
+Field Name | Type | Description
+---|:---:|---
+<a name="nrpnItemName"></a>name | `integer` | **Required.** The name of this value that is being read or sent.
+<a name="nrpnItemMax"></a>max | `integer` | The maximum number that should be set.
+<a name="nrpnItemAddValue"></a>addValue | `integer` | When displaying this data and this value to make it more human friendly.
+<a name="nrpnItemMap"></a>map | [`string`] | Map the value to this array of Strings to make it more human friendly.
+<a name="nrpnItemSuffix"></a>suffix | `string` | This helps for human readability when display the data.
+<a name="nrpnItemMSBOnly"></a>MSBOnly | `string` | Only use the MSB of the NRPN. Assume LSB is not sent.
+<a name="nrpnItemTransmit"></a>transmit | `boolean` | If not set as true then it assumed false.
+<a name="nrpnItemRecognize"></a>recognize | `boolean` | If not set as true then it assumed false.
+
+
+##### Parts Objects 
+
+Field Pattern | Type | Description
+---|:---:|---
+<a name="operationExtensions"></a>^x- | Any | Allows extensions to the MIS Schema. The field name MUST begin with `x-`, for example, `x-internal-id`. The value can be `null`, a primitive, an array or an object. 
+
+
+
+##### NRPN Item Object Example:
+
+```js
+{
+	"name":"Part 1 Motion Seq Type"
+	,"transmitted":true
+	,"recognised":true
+	,"map":["Off","Smooth","TrigHold"]
+	,"MSBOnly":true
+}
+```
+
 
 
 #### <a name="sysexObject"></a>Sysex Object
