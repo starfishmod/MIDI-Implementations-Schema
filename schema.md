@@ -33,7 +33,7 @@ The specification as defined by the [MIDI Association](https://www.midi.org/)
 Used to send changes on a specific channel. Examples include pan, volume.
 
 ##### <a name="nrpn"></a>NRPN 
-Non-Registered Paramter Number. More often than not manufactuers use [NRPN](https://en.wikipedia.org/wiki/NRPN) to send data to and from synthesizers. NRPN usually require between 3 and 4  -  3 byte MIDI messages.
+Non-Registered Parameter Number. More often than not manufactuers use [NRPN](https://en.wikipedia.org/wiki/NRPN) to send data to and from synthesizers. NRPN usually require between 3 and 4  -  3 byte MIDI messages.
 
 ##### <a name="deviceEnquiry"></a>Device Enquiry 
 A standard Sysex message that may return information about the device.
@@ -66,7 +66,9 @@ By convention, the MIS specification file is named based on the manufacter and m
 
 Primitive data types in the MIS Specification are based on the types supported by the [JSON-Schema Draft 4](http://json-schema.org/latest/json-schema-core.html#anchor8). Models are described using the [Schema Object](#schemaObject) which is a subset of JSON Schema Draft 4.
 
-<a name="hexAndDec"></a>Hexidecimal and integers can be used interchangably. However numbers in Hexidecimal should be proceeded with `0x` and must become strings as JSON does not support Hex. So the number 66 is represented as `"0x42"`. This makes it clear for any humans to distinguish between the two - but does put extra burden on the computer to do the same.
+<a name="hexAndDec"></a>Hexidecimal and integers are sometimes used interchangably. However numbers in Hexidecimal should be a string as JSON does not support hex. So the number 66 is represented as `"42"`. This should always be in a 2 byte string so 0 is `00`. This keeps it similar to most Sysex documentation conventions. Some items are required to be in hex and other in integers and are clarified as such. For example CC numbers are an integer between 0-127 while the NRPN MSB/LSB are in hex. 
+
+While this makes it clear for any humans to distinguish between the two - but does put extra burden on the computer to do the same.
 
 ### Schema
 
@@ -99,7 +101,7 @@ The object provides metadata about the implementation.
 
 Field Name | Type | Description
 ---|:---:|---
-<a name="infoManufacturer"></a>manufacturer | [nameID Object](#nameIDObject) | **Required.** The manufactuer of the device. The ID refers to the ID as listed [MANUFACTURER SYSEX ID NUMBERS](https://www.midi.org/specifications/item/manufacturer-id-numbers) and the [Device Enquiry](#deviceEnquiry)
+<a name="infoManufacturer"></a>manufacturer | [nameID Object](#nameIDObject) | **Required.** The manufactuer of the device. The ID refers to the ID as listed [MANUFACTURER SYSEX ID NUMBERS](https://www.midi.org/specifications/item/manufacturer-id-numbers) and the [Device Enquiry](#deviceEnquiry). When the Manufactuer id is a 2 byte Id it should list as `"05 C4"`
 <a name="infoFamily"></a>family | [nameID Object](#nameIDObject) | The family of the device. The id refers to data from the [Device Enquiry](#deviceEnquiry)
 <a name="infoFamily"></a>model | [nameID Object](#nameIDObject) | **Required.** The model of the device. The id refers to data from the [Device Enquiry](#deviceEnquiry)
 <a name="infoDate"></a>date | `string` | **Required.** The date of this MIS.
@@ -120,21 +122,21 @@ Field Pattern | Type | Description
 {
     "manufacturer": {
       "name": "Korg",
-      "id": 66
+      "id": "42"
     },
     "family": {
       "name": "Electribe",
-      "id": 0
+      "id": "00"
     },
     "model": {
       "name": "ES-1",
-      "id": 87
+      "id": "57"
     },
     "date": "1999-01-01",
     "deviceVersions": [
       "1.6"
     ],
-    "documentVersion": 0.2,
+    "documentVersion": "0.2",
     "author": "Andrew Mee <primary.edw@gmail.com>",
     "contributors": []
 }
@@ -150,7 +152,7 @@ Simple object for holding a name and ID value.
 Field Name | Type | Description
 ---|:---:|---
 <a name="nameIDName"></a>name | `string` | **Required.** The identifying name of the object.
-<a name="nameIDID"></a>id | `integer` | The id of the name used as reference
+<a name="nameIDID"></a>id | `string` | The id in hex of the name used as reference
 
 ##### Patterned Objects 
 
@@ -163,7 +165,7 @@ Field Pattern | Type | Description
 ```js
 {
   "name": "Korg",
-  "id": 66
+  "id": "42H"
 }
 ```
 
@@ -353,7 +355,7 @@ Field Pattern | Type | Description
 }
 ```
 
-#### <a name="controllersObject"></a>Contollers Object
+#### <a name="controllersObject"></a>Controllers Object
 
 This describes the controllers available for the MIDI device.
 
@@ -375,9 +377,9 @@ Field Name | Type | Description
 
 Field Pattern | Type | Description
 ---|:---:|---
-<a name="contollersExtensions"></a>^x- | Any | Allows extensions to the MIS Schema. The field name MUST begin with `x-`, for example, `x-internal-id`. The value can be `null`, a primitive, an array or an object. 
+<a name="controllersExtensions"></a>^x- | Any | Allows extensions to the MIS Schema. The field name MUST begin with `x-`, for example, `x-internal-id`. The value can be `null`, a primitive, an array or an object. 
 
-##### Contollers Object Example:
+##### Controllers Object Example:
 
 ```js
 {
@@ -388,7 +390,7 @@ Field Pattern | Type | Description
 	}
   }
   ,'NRPN':{
-	"0x05/0x07":{
+	"05 07":{
 		"name":"Part 1 Motion Seq Type"
 		,"transmitted":true
 		,"recognised":true
@@ -438,14 +440,14 @@ A list of the MIDI NRPN parameters available.
 
 Field Pattern | Type | Description
 ---|:---:|---
-<a name="nrpnList"></a>{MSB}/{LSB} | [NRPN Item Object](#nrpnItemObject) | **Required.** This is the Hex of the NRPN MSB and LSB values.
+<a name="nrpnList"></a>{MSB} {LSB} | [NRPN Item Object](#nrpnItemObject) | **Required.** This is the Hex of the NRPN MSB and LSB values.
 <a name="nrpnExtensions"></a>^x- | Any | Allows extensions to the MIS Schema. The field name MUST begin with `x-`, for example, `x-internal-id`. The value can be `null`, a primitive, an array or an object. 
 
 ##### NRPN Object Example:
 
 ```js
 {
-	"0x05/0x07":{
+	"05 07":{
 		"name":"Part 1 Motion Seq Type"
 		,"transmitted":true
 		,"recognised":true
@@ -455,21 +457,20 @@ Field Pattern | Type | Description
 }
 ```
 
-
 #### <a name="nrpnItemObject"></a>NRPN Item Object
 
-Describes how to process each byte returned or sent in a Sysex Message.
+Describes how the NRPN Data works
 
 ##### Fixed Fields
 
 Field Name | Type | Description
 ---|:---:|---
-<a name="nrpnItemName"></a>name | `integer` | **Required.** The name of this value that is being read or sent.
+<a name="nrpnItemName"></a>name | `string` | **Required.** The name of this value that is being read or sent.
 <a name="nrpnItemMax"></a>max | `integer` | The maximum number that should be set.
 <a name="nrpnItemAddValue"></a>addValue | `integer` | When displaying this data and this value to make it more human friendly.
 <a name="nrpnItemMap"></a>map | [`string`] | Map the value to this array of Strings to make it more human friendly.
 <a name="nrpnItemSuffix"></a>suffix | `string` | This helps for human readability when display the data.
-<a name="nrpnItemMSBOnly"></a>MSBOnly | `string` | Only use the MSB of the NRPN. Assume LSB is not sent.
+<a name="nrpnItemMSBOnly"></a>MSBOnly | `boolean` | Only use the MSB of the NRPN. Assume LSB is not sent.
 <a name="nrpnItemTransmit"></a>transmit | `boolean` | If not set as true then it assumed false.
 <a name="nrpnItemRecognize"></a>recognize | `boolean` | If not set as true then it assumed false.
 
@@ -510,7 +511,7 @@ Field Name | Type | Description
 <a name="sysexMidiTuning"></a>midiTuning | [RTBoolean Object](#RTBooleanObject) | If True then this device will respond to a MIDI Tuning Sysex.
 <a name="sysexMasterVolume"></a>midiVolume | [RTBoolean Object](#RTBooleanObject) | If True then this device will respond to a Master Volume Sysex.
 <a name="sysexMasterBalance"></a>midiBalance | [RTBoolean Object](#RTBooleanObject) | If True then this device will respond to a Master Balance Sysex.
-<a name="sysexExclusiveHeader"></a>exclusiveHeader | [`integer,string`] | This is the header used on all Sysex queries. Strings can be used for Hexidecimal numbers. However Integers are recommended.
+<a name="sysexExclusiveHeader"></a>exclusiveHeader | `string` | This is the header used on all Sysex queries. This will be an string of hex `"F0 42 3C 57"`.
 <a name="sysexFunctions"></a>functions | [Sysex Functions Object](#sysexFunctionsObject) | This holds the device specific Sysex instruction set
 <a name="sysexDefinitions"></a>definitions | [Sysex Definitions Object](#definitionsObject) | Used generally as way to refactor repeated use of sysex data structures.
 
@@ -530,9 +531,9 @@ Field Pattern | Type | Description
   "masterVolume": {
 	"recognize": true
   },
-  "exclusiveHeader":["0xF0","0x42","0x3c","0x57"],
+  "exclusiveHeader": "F0 42 3C 57",
   "functions": {
-        "0x10":{
+        "10":{
           "name": "CURRENT PATTERN DATA DUMP REQUEST"
           ,"recognised":true
         }
@@ -549,14 +550,14 @@ Holds the relative paths to the individual Sysex calls as given by the Function 
 
 Field Pattern | Type | Description
 ---|:---:|---
-<a name="functionIdSysexFunction"></a>/{functionId} | [Sysex Function Item Object](#sysexFunctionItemObject) | **Required.** An indivdual function Id call. This should be a string of the Hex of the Function Id e.g. `0x4C`
+<a name="functionIdSysexFunction"></a>/{functionId} | [Sysex Function Item Object](#sysexFunctionItemObject) | **Required.** An indivdual function Id call. This should be a hex of the Function Id e.g. `4C`
 <a name="SysexFunctionExtensions"></a>^x- | Any | Allows extensions to the MIS Schema. The field name MUST begin with `x-`, for example, `x-internal-id`. The value can be `null`, a primitive, an array or an object. 
 
 ##### Sysex Functions Object Example
 
 ```js
 {
-	"0x10":{
+	"10":{
 	  "name": "CURRENT PATTERN DATA DUMP REQUEST"
 	  ,"recognised":true
 	}
@@ -606,7 +607,7 @@ Describes how to process each byte returned or sent in a Sysex Message.
 
 Field Name | Type | Description
 ---|:---:|---
-<a name="partsByte"></a>byte | `integer` | **Required.** The byte after the ExclusiveHeader and the Function Id starting from 0 that you wish to read
+<a name="partsByte"></a>byte | `integer` | **Required.** The byte count after the ExclusiveHeader and the Function Id starting from 0 that you wish to read
 <a name="partsLength"></a>length | `integer` | How many bytes to read. If not set it is assumed to only read 1 byte.
 <a name="partsName"></a>name | `integer` | **Required.** The name of this value that is being read or sent.
 <a name="partsType"></a>type | `string` | The value MUST be one of `"string"`, `"number"`, `"integer"`, `"boolean"` or `"array"`. If not set integer is assumed.
