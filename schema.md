@@ -165,7 +165,7 @@ Field Pattern | Type | Description
 ```js
 {
   "name": "Korg",
-  "id": "42H"
+  "id": "42"
 }
 ```
 
@@ -178,37 +178,37 @@ This describes the basic MIDI implementation of the device.
 
 Field Name | Type | Description
 ---|:---:|---
-<a name="chartMidiChannels"></a>midiChannels | [RTMultiRange Object](#RTMultiRangeObject) | The range of MIDI channels that the device transmits, exports, responds to, and/or imports. Devices using extended channel systems via multiple cables or input/output ports should list the total number of channels in the appropriate “Transmitted” or “Recognized” columns and should use the “Remarks” column to indicate the terminology used by the device to identify the extra channels (i.e., “A1 - A16, B1 - B-16”)
-<a name="chartNoteNumbers"></a>noteNumbers | [RTRange Object](#RTRangeObject) | The total range of transmitted or recognized notes. 
-<a name="chartProgramChange"></a>programChange | [RTRange Object](#RTRangeObject) | Indicate the range of Program Change numbers which are transmitted and/or recognized. If not implemented, enter a “No” in the appropriate column.
-<a name="chartBankSelect"></a>bankSelect | [RTBoolean Object](#RTBooleanObject) | Use a “Yes” or “No” to indicate whether or not the device correctly responds to Bank Select messages as per the MIDI 1.0 Specification. Devices that respond only to Bank Select MSB (cc #0) but not to the LSB (cc #32) should place a "No" in the “Recognized” column and should indicate this in the “Remarks” column. If the device does correctly respond to Bank Select messages, use the “Remarks” column to indicate what banks or ranges of banks are available in the device. If certain banks are accessible only by MIDI (and not by front panel user control), these should be listed in the “Remarks” column.
-<a name="chartMode1"></a>mode1 | [RTBoolean Object](#RTBooleanObject) | Mode 1: Omni-On, Poly (Yes/No)
-<a name="chartMode2"></a>mode2 | [RTBoolean Object](#RTBooleanObject) | Mode 2: Omni-On, Mono (Yes/No)
-<a name="chartMode3"></a>mode3 | [RTBoolean Object](#RTBooleanObject) | Mode 3: Omni-Off, Poly (Yes/No) 
-<a name="chartMode4"></a>mode4 | [RTBoolean Object](#RTBooleanObject) | Mode 4: Omni-Off, Mono (Yes/No) 
-<a name="chartModeMulti"></a>modeMulti | [RTBoolean Object](#RTBooleanObject) | Multi Mode (Yes/No)
-<a name="chartNoteOnVelocity"></a>noteOnVelocity | [RTBoolean Object](#RTBooleanObject) | Note On Velocity (Yes/No)
-<a name="chartNoteOffVelocity"></a>noteOffVelocity | [RTBoolean Object](#RTBooleanObject) | Note Off Velocity (Yes/No)
-<a name="chartChannelAftertouch"></a>channelAftertouch | [RTBoolean Object](#RTBooleanObject) | Channel AfterTouch (Yes/No)
-<a name="chartkeyAftertouch"></a>keyAftertouch | [RTBoolean Object](#RTBooleanObject) | Poly (Key) Aftertouch (Yes/No) 
-<a name="chartPitchBend"></a>pitchBend | [RTBoolean Object](#RTBooleanObject) | Pitch Bend (Yes/No) 
-<a name="chartActiveSense"></a>activeSense | [RTBoolean Object](#RTBooleanObject) | Active Sensing (Yes/No) 
-<a name="chartSytemReset"></a>systemReset | [RTBoolean Object](#RTBooleanObject) | System Reset (Yes/No) 
-<a name="chartTuneRequest"></a>tuneRequest | [RTBoolean Object](#RTBooleanObject) | Tune Request (Yes/No)  
-<a name="chartMidiClock"></a>midiClock | [RTBoolean Object](#RTBooleanObject) | MIDI Clock (Yes/No)  
-<a name="chartSongPos"></a>songPos | [RTBoolean Object](#RTBooleanObject) | Song Position Pointer (Yes/No)  
-<a name="chartSongSelect"></a>songSelect | [RTBoolean Object](#RTBooleanObject) | Song Select (Yes/No)  
-<a name="chartStart"></a>start | [RTBoolean Object](#RTBooleanObject) | Start (Yes/No)  
-<a name="chartContinue"></a>continue | [RTBoolean Object](#RTBooleanObject) | Continue (Yes/No)   
-<a name="chartStop"></a>stop | [RTBoolean Object](#RTBooleanObject) | Stop (Yes/No)   
-<a name="chartMTC"></a>MTC | [RTBoolean Object](#RTBooleanObject) | MIDI Time Code (Yes/No)  
-<a name="chartMMC"></a>MMC | [RTBoolean Object](#RTBooleanObject) | MIDI Machine Control (Yes/No)  
-<a name="chartMSC"></a>MSC | [RTBoolean Object](#RTBooleanObject) | MIDI Show Control messages 
+<a name="chartMidiChannels"></a>midiChannels | [recognizeTransmit Object](#recognizeTransmitObject) | The range of MIDI channels that the device transmits, exports, responds to, and/or imports. Devices using extended channel systems via multiple cables or input/output ports should list the total number of channels in the appropriate “Transmitted” or “Recognized” columns and should use the “Remarks” column to indicate the terminology used by the device to identify the extra channels (i.e., “A1 - A16, B1 - B-16”)
+<a name="chartNoteNumbers"></a>noteNumbers | [recognizeTransmit Object](#recognizeTransmitObject) | The total range of transmitted or recognized notes. 
+<a name="chartProgramChange"></a>programChange | [recognizeTransmit Object](#recognizeTransmitObject) | Indicate the range of Program Change numbers which are transmitted and/or recognized. If not implemented, enter a “No” in the appropriate column.
+<a name="chartBankSelect"></a>bankSelect | [recognizeTransmit Object](#recognizeTransmitObject) | Use a “Yes” or “No” to indicate whether or not the device correctly responds to Bank Select messages as per the MIDI 1.0 Specification. Devices that respond only to Bank Select MSB (cc #0) but not to the LSB (cc #32) should place a "No" in the “Recognized” column and should indicate this in the “Remarks” column. If the device does correctly respond to Bank Select messages, use the “Remarks” column to indicate what banks or ranges of banks are available in the device. If certain banks are accessible only by MIDI (and not by front panel user control), these should be listed in the “Remarks” column.
+<a name="chartMode1"></a>mode1 | [recognizeTransmit Object](#recognizeTransmitObject) | Mode 1: Omni-On, Poly (Yes/No)
+<a name="chartMode2"></a>mode2 | [recognizeTransmit Object](#recognizeTransmitObject) | Mode 2: Omni-On, Mono (Yes/No)
+<a name="chartMode3"></a>mode3 | [recognizeTransmit Object](#recognizeTransmitObject) | Mode 3: Omni-Off, Poly (Yes/No) 
+<a name="chartMode4"></a>mode4 | [recognizeTransmit Object](#recognizeTransmitObject) | Mode 4: Omni-Off, Mono (Yes/No) 
+<a name="chartModeMulti"></a>modeMulti | [recognizeTransmit Object](#recognizeTransmitObject) | Multi Mode (Yes/No)
+<a name="chartNoteOnVelocity"></a>noteOnVelocity | [recognizeTransmit Object](#recognizeTransmitObject) | Note On Velocity (Yes/No)
+<a name="chartNoteOffVelocity"></a>noteOffVelocity | [recognizeTransmit Object](#recognizeTransmitObject) | Note Off Velocity (Yes/No)
+<a name="chartChannelAftertouch"></a>channelAftertouch | [recognizeTransmit Object](#recognizeTransmitObject) | Channel AfterTouch (Yes/No)
+<a name="chartkeyAftertouch"></a>keyAftertouch | [recognizeTransmit Object](#recognizeTransmitObject) | Poly (Key) Aftertouch (Yes/No) 
+<a name="chartPitchBend"></a>pitchBend | [recognizeTransmit Object](#recognizeTransmitObject) | Pitch Bend (Yes/No) 
+<a name="chartActiveSense"></a>activeSense | [recognizeTransmit Object](#recognizeTransmitObject) | Active Sensing (Yes/No) 
+<a name="chartSytemReset"></a>systemReset | [recognizeTransmit Object](#recognizeTransmitObject) | System Reset (Yes/No) 
+<a name="chartTuneRequest"></a>tuneRequest | [recognizeTransmit Object](#recognizeTransmitObject) | Tune Request (Yes/No)  
+<a name="chartMidiClock"></a>midiClock | [recognizeTransmit Object](#recognizeTransmitObject) | MIDI Clock (Yes/No)  
+<a name="chartSongPos"></a>songPos | [recognizeTransmit Object](#recognizeTransmitObject) | Song Position Pointer (Yes/No)  
+<a name="chartSongSelect"></a>songSelect | [recognizeTransmit Object](#recognizeTransmitObject) | Song Select (Yes/No)  
+<a name="chartStart"></a>start | [recognizeTransmit Object](#recognizeTransmitObject) | Start (Yes/No)  
+<a name="chartContinue"></a>continue | [recognizeTransmit Object](#recognizeTransmitObject) | Continue (Yes/No)   
+<a name="chartStop"></a>stop | [recognizeTransmit Object](#recognizeTransmitObject) | Stop (Yes/No)   
+<a name="chartMTC"></a>MTC | [recognizeTransmit Object](#recognizeTransmitObject) | MIDI Time Code (Yes/No)  
+<a name="chartMMC"></a>MMC | [recognizeTransmit Object](#recognizeTransmitObject) | MIDI Machine Control (Yes/No)  
+<a name="chartMSC"></a>MSC | [recognizeTransmit Object](#recognizeTransmitObject) | MIDI Show Control messages 
 <a name="chartGM"></a>GM | [`string`] | Indicate whether or not the device has a mode of operation which complies with any of the General MIDI specifications: General MIDI System Level 1 (`GM`), General MIDI System Level 2 (`GM2`) and/or General MIDI Lite (`GMLite`). 
 <a name="chartDLS"></a>DLS | [`string`] | Indicate whether or not the device has a mode of operation that complies with any of the Downloadable Sounds specifications: DLS Level 1 (`DLS`) , DLS Level 2 (`DLS2`, including DLS 2.1 and DLS 2.2), and/or `MobileDLS`.  It is recommended that manufacturers indicate in the Remarks column the means of receiving DLS data (i.e., specific physical format, device interface, or transport protocol, etc.) and, if a file system media is used, indicate in the Remarks column the exact format(s) supported (i.e., Windows, Mac OS, or Linux file system version, etc.). 
 <a name="chartSMF"></a>SMF | [`string`] | Indicate whether or not the device has a mode of operation that can play, import, and/or export any of the Standard MIDI File formats, and, if so, the formats(s) supported: format `0` (single track), format `1` (multitrack), and/or format `2` (multiple independent single-track patterns). If yes, it is also recommended that manufacturers indicate in the Remarks column the means of receiving SMF data (i.e., specific physical format, device interface, or transport protocol, etc.) and, if a file system media is used, indicate in the Remarks column the exact format(s) supported (i.e. Windows, Mac OS, or Linux file system version, etc.).  
 <a name="chartXMF"></a>XMF | [`string`] | Indicate whether or not the device has a mode of operation that can play, import, and/or export any of the officially defined XMF File Types: XMF Type `0`, XMF Type `1`, or Mobile XMF  (XMF Type `2`). If the device uses the XMF Meta File Format in a manner that does not conform to any of the XMF File Type specifications, indicate this in the Remarks column. 
-<a name="chartSPMIDI"></a>SPMIDI | [RTBoolean Object](#RTBooleanObject) | SP-MIDI compatible? (Yes/No) 
+<a name="chartSPMIDI"></a>SPMIDI | [recognizeTransmit Object](#recognizeTransmitObject) | SP-MIDI compatible? (Yes/No) 
 
 ##### Patterned Objects 
 
@@ -225,7 +225,7 @@ Field Pattern | Type | Description
 }
 ```
 
-#### <a name="RTMultiRangeObject"></a>RTMultiRange Object
+#### <a name="recognizeTransmitObject"></a>recognizeTransmit Object
 
 Object for describing range in the Transmit/Export, Recognize/Import and Remarks columns in the MIDI Implementation Chart. Except this can have multiple ranges for different groups.
 
@@ -233,8 +233,11 @@ Object for describing range in the Transmit/Export, Recognize/Import and Remarks
 
 Field Name | Type | Description
 ---|:---:|---
-<a name="RTRangeTransmit"></a>transmit | [[Range Object](#RangeObject)] | The upper and lower limits.
-<a name="RTRangeRecognize"></a>recognize | [[Range Object](#RangeObject)] | The upper and lower limits.
+<a name="RTRangeTransmitRange"></a>transmitRange | [[Range Object](#RangeObject)] | The upper and lower limits. `transmit` MUST be marked as true
+<a name="RTRangeRecognizeRange"></a>recognizeRange | [[Range Object](#RangeObject)] | The upper and lower limits. `recognize` MUST be marked as true
+<a name="RTBooleanTransmit"></a>transmit | `boolean` | **Required** Does this transmit this feature.
+<a name="RTBooleanRecognize"></a>recognize | `boolean` | **Required** Does this transmit this feature.
+<a name="RTRangeRemarks"></a>name | `string` | Name of the item. Usefut when used in NRPN's or in CC information where it is not the standard controller function
 <a name="RTRangeRemarks"></a>remarks | `string` | Any further Information.
 
 ##### Patterned Objects 
@@ -243,60 +246,27 @@ Field Pattern | Type | Description
 ---|:---:|---
 <a name="RTMultiRangeExtensions"></a>^x- | Any | Allows extensions to the MIS Schema. The field name MUST begin with `x-`, for example, `x-internal-id`. The value can be `null`, a primitive, an array or an object. 
 
-##### RTMultiRange Object Example:
+##### recognizeTransmit Object Example:
 
 ```js
 {
-  "transmit": [
+  "transmit":true,
+  "transmitRange": [
 	  {
 		start:0,
 		stop:16,
-		group:"A",
+		name:"MIDI A",
 	  },
 	  {
 		start:0,
 		stop:16,
-		group:"B",
+		name:"MIDI B",
 	  }
   ]
 }
 ```
 
-#### <a name="RTRangeObject"></a>RTRange Object
 
-Object for describing range in the Transmit/Export, Recognize/Import and Remarks columns in the MIDI Implementation Chart
-
-##### Fixed Fields
-
-Field Name | Type | Description
----|:---:|---
-<a name="RTRangeTransmit"></a>transmit | [Range Object](#RangeObject) | The upper and lower limts.
-<a name="RTRangeRecognize"></a>recognize | [Range Object](#RangeObject) | The upper and lower limts.
-<a name="RTRangeRemarks"></a>remarks | `string` | Any further Information.
-
-##### Patterned Objects 
-
-Field Pattern | Type | Description
----|:---:|---
-<a name="RTRangeExtensions"></a>^x- | Any | Allows extensions to the MIS Schema. The field name MUST begin with `x-`, for example, `x-internal-id`. The value can be `null`, a primitive, an array or an object. 
-
-##### RTRange Object Example:
-
-```js
-{
-  "transmit": {
-	start:0,
-	stop:16,
-	group:"A",
-  },
-  "recognize": {
-	start:0,
-	stop:16,
-	group:"A",
-  },
-  "remarks": "A is uses MIDI output A"
-}
-```
 
 #### <a name="RangeObject"></a>Range Object
 
@@ -308,7 +278,7 @@ Field Name | Type | Description
 ---|:---:|---
 <a name="RangeStart"></a>start | `integer` | **Required.** The lower limit.
 <a name="RangeStop"></a>stop | `integer` | **Required.** The upper limit.
-<a name="RangeGroup"></a>group | `string` | The Group the range belongs to.
+<a name="RangeGroup"></a>name | `string` | The name the range belongs to.
 
 ##### Patterned Objects 
 
@@ -322,38 +292,10 @@ Field Pattern | Type | Description
 {
 	start:0,
 	stop:16,
-	group:"A",
+	name:"MIDI A",
 }
 ```
 
-#### <a name="RTBooleanObject"></a>RTBoolean Object
-
-Object for describing the Transmit/Export, Recognize/Import and Remarks columns in the MIDI Implementation Chart
-
-##### Fixed Fields
-
-Field Name | Type | Description
----|:---:|---
-<a name="RTBooleanTransmit"></a>transmit | `boolean` | If not set as true then it assumed false.
-<a name="RTBooleanRecognize"></a>recognize | `boolean` | If not set as true then it assumed false.
-<a name="RTBooleanRemarks"></a>remarks | `string` | Any further Information.
-<a name="RTBooleanFunction"></a>function | `string` | Only used for CC messages where the Function provided does not much the standard Function name.
-
-##### Patterned Objects 
-
-Field Pattern | Type | Description
----|:---:|---
-<a name="RTBooleanExtensions"></a>^x- | Any | Allows extensions to the MIS Schema. The field name MUST begin with `x-`, for example, `x-internal-id`. The value can be `null`, a primitive, an array or an object. 
-
-##### RTBoolean Object Example:
-
-```js
-{
-  "transmit": true,
-  "recognize": true,
-  "remarks": "Only in Song Mode"
-}
-```
 
 #### <a name="controllersObject"></a>Controllers Object
 
@@ -365,12 +307,12 @@ Field Name | Type | Description
 ---|:---:|---
 <a name="controllerCC"></a>CC | [CCList Object](#ccListObject) | A description of the MIDI control change parameters available
 <a name="controllerNRPN"></a>NRPN | [NRPN Object](#nrpnObject) | NRPN messages
-<a name="controllerRPN00"></a>RPN00 | [RTBoolean Object](#RTBooleanObject) | RPN 00 (Pitch Bend Sensitivity) (Yes/No)
-<a name="controllerRPN01"></a>RPN01 | [RTBoolean Object](#RTBooleanObject) | RPN 01 (Channel Fine Tune) (Yes/No)
-<a name="controllerRPN02"></a>RPN02 | [RTBoolean Object](#RTBooleanObject) | RPN 02 (Channel Coarse Tune) (Yes/No)
-<a name="controllerRPN03"></a>RPN03 | [RTBoolean Object](#RTBooleanObject) | RPN 03 (Tuning Program Select) (Yes/No) 
-<a name="controllerRPN04"></a>RPN04 | [RTBoolean Object](#RTBooleanObject) | RPN 04 (Tuning Bank Select) (Yes/No)
-<a name="controllerRPN05"></a>RPN05 | [RTBoolean Object](#RTBooleanObject) | RPN 05 (Modulation Depth Range) (Yes/No) 
+<a name="controllerRPN00"></a>RPN00 | [recognizeTransmit Object](#recognizeTransmitObject) | RPN 00 (Pitch Bend Sensitivity) (Yes/No)
+<a name="controllerRPN01"></a>RPN01 | [recognizeTransmit Object](#recognizeTransmitObject) | RPN 01 (Channel Fine Tune) (Yes/No)
+<a name="controllerRPN02"></a>RPN02 | [recognizeTransmit Object](#recognizeTransmitObject) | RPN 02 (Channel Coarse Tune) (Yes/No)
+<a name="controllerRPN03"></a>RPN03 | [recognizeTransmit Object](#recognizeTransmitObject) | RPN 03 (Tuning Program Select) (Yes/No) 
+<a name="controllerRPN04"></a>RPN04 | [recognizeTransmit Object](#recognizeTransmitObject) | RPN 04 (Tuning Bank Select) (Yes/No)
+<a name="controllerRPN05"></a>RPN05 | [recognizeTransmit Object](#recognizeTransmitObject) | RPN 05 (Modulation Depth Range) (Yes/No) 
 
 
 ##### Patterned Objects 
