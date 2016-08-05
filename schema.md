@@ -36,7 +36,7 @@ Used to send changes on a specific channel. Examples include pan, volume.
 Non-Registered Parameter Number. More often than not manufactuers use [NRPN](https://en.wikipedia.org/wiki/NRPN) to send data to and from synthesizers. NRPN usually require between 3 and 4  -  3 byte MIDI messages.
 
 ##### <a name="deviceEnquiry"></a>Device Enquiry 
-A standard Sysex message that may return information about the device.
+A Universal Sysex message that may return information about the device.
 
 ## Specification
 
@@ -235,8 +235,8 @@ Field Name | Type | Description
 ---|:---:|---
 <a name="RTRangeTransmitRange"></a>transmitRange | [[Range Object](#RangeObject)] | The upper and lower limits. `transmit` MUST be marked as true
 <a name="RTRangeRecognizeRange"></a>recognizeRange | [[Range Object](#RangeObject)] | The upper and lower limits. `recognize` MUST be marked as true
-<a name="RTBooleanTransmit"></a>transmit | `boolean` | **Required** Does this transmit this feature.
-<a name="RTBooleanRecognize"></a>recognize | `boolean` | **Required** Does this transmit this feature.
+<a name="recognizeTransmitTransmit"></a>transmit | `boolean` | **Required** Does this transmit this feature.
+<a name="recognizeTransmitRecognize"></a>recognize | `boolean` | **Required** Does this transmit this feature.
 <a name="RTRangeRemarks"></a>name | `string` | Name of the item. Usefut when used in NRPN's or in CC information where it is not the standard controller function
 <a name="RTRangeRemarks"></a>remarks | `string` | Any further Information.
 
@@ -358,7 +358,7 @@ A list of the MIDI control change parameters available.
 
 Field Pattern | Type | Description
 ---|:---:|---
-<a name="ccnumcList"></a>/{ccNum} | [RTBoolean Object](#RTBooleanObject) | **Required.** A CC number between 0-127.
+<a name="ccnumcList"></a>/{ccNum} | [recognizeTransmit Object](#recognizeTransmitObject) | **Required.** A CC number between 0-127.
 <a name="ccListExtensions"></a>^x- | Any | Allows extensions to the MIS Schema. The field name MUST begin with `x-`, for example, `x-internal-id`. The value can be `null`, a primitive, an array or an object. 
 
 ##### CC List Object Example:
@@ -447,12 +447,12 @@ Object for describing the Sysex available to the device.
 
 Field Name | Type | Description
 ---|:---:|---
-<a name="sysexSampleDumpStandard"></a>sampleDumpStandard | [RTBoolean Object](#RTBooleanObject) | If True then this device will respond to a Sample Dump Sysex.
-<a name="sysexDeviceEnquiry"></a>deviceEnquiry | [RTBoolean Object](#RTBooleanObject) | If True then this device will respond to this a [Device Enquiry](#deviceEnquiry).
-<a name="sysexFileDump"></a>fileDump | [RTBoolean Object](#RTBooleanObject) | If True then this device will respond to a File Dump Sysex.
-<a name="sysexMidiTuning"></a>midiTuning | [RTBoolean Object](#RTBooleanObject) | If True then this device will respond to a MIDI Tuning Sysex.
-<a name="sysexMasterVolume"></a>midiVolume | [RTBoolean Object](#RTBooleanObject) | If True then this device will respond to a Master Volume Sysex.
-<a name="sysexMasterBalance"></a>midiBalance | [RTBoolean Object](#RTBooleanObject) | If True then this device will respond to a Master Balance Sysex.
+<a name="sysexSampleDumpStandard"></a>sampleDumpStandard | [recognizeTransmit Object](#recognizeTransmitObject) | If True then this device will respond to a Sample Dump Sysex.
+<a name="sysexDeviceEnquiry"></a>deviceEnquiry | [recognizeTransmit Object](#recognizeTransmitObject) | If True then this device will respond to this a [Device Enquiry](#deviceEnquiry).
+<a name="sysexFileDump"></a>fileDump | [recognizeTransmit Object](#recognizeTransmitObject) | If True then this device will respond to a File Dump Sysex.
+<a name="sysexMidiTuning"></a>midiTuning | [recognizeTransmit Object](#recognizeTransmitObject) | If True then this device will respond to a MIDI Tuning Sysex.
+<a name="sysexMasterVolume"></a>midiVolume | [recognizeTransmit Object](#recognizeTransmitObject) | If True then this device will respond to a Master Volume Sysex.
+<a name="sysexMasterBalance"></a>midiBalance | [recognizeTransmit Object](#recognizeTransmitObject) | If True then this device will respond to a Master Balance Sysex.
 <a name="sysexExclusiveHeader"></a>exclusiveHeader | `string` | This is the header used on all Sysex queries. This will be an string of hex `"F0 42 3C 57"`.
 <a name="sysexFunctions"></a>functions | [Sysex Functions Object](#sysexFunctionsObject) | This holds the device specific Sysex instruction set
 <a name="sysexDefinitions"></a>definitions | [Sysex Definitions Object](#definitionsObject) | Used generally as way to refactor repeated use of sysex data structures.
@@ -551,7 +551,7 @@ Field Name | Type | Description
 ---|:---:|---
 <a name="partsByte"></a>byte | `integer` | **Required.** The byte count after the ExclusiveHeader and the Function Id starting from 0 that you wish to read
 <a name="partsLength"></a>length | `integer` | How many bytes to read. If not set it is assumed to only read 1 byte.
-<a name="partsName"></a>name | `integer` | **Required.** The name of this value that is being read or sent.
+<a name="partsName"></a>name | `string` | **Required.** The name of this value that is being read or sent.
 <a name="partsType"></a>type | `string` | The value MUST be one of `"string"`, `"number"`, `"integer"`, `"boolean"` or `"array"`. If not set integer is assumed.
 <a name="partsMax"></a>max | `integer` | The maximum number that should be set.
 <a name="partsAddValue"></a>addValue | `integer` | When displaying this data and this value to make it more human friendly.
