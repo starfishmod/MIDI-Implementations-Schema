@@ -60,7 +60,7 @@ The schema exposes two types of fields. Fixed fields, which have a declared name
 
 The MIS representation of the implementation is made of a single file. 
 
-By convention, the MIS specification file is named based on the manufacter and model number `Korg_ES1.json`.
+By convention, the MIS specification file is named based on the manufacter and model number e.g. `Korg_ES1.json`.
 
 ### Data Types
 
@@ -178,9 +178,9 @@ This describes the basic MIDI implementation of the device.
 
 Field Name | Type | Description
 ---|:---:|---
-<a name="chartMidiChannels"></a>midiChannels | [recognizeTransmit Object](#recognizeTransmitObject) | The range of MIDI channels that the device transmits, exports, responds to, and/or imports. Devices using extended channel systems via multiple cables or input/output ports should list the total number of channels in the appropriate “Transmitted” or “Recognized” columns and should use the “Remarks” column to indicate the terminology used by the device to identify the extra channels (i.e., “A1 - A16, B1 - B-16”)
-<a name="chartNoteNumbers"></a>noteNumbers | [recognizeTransmit Object](#recognizeTransmitObject) | The total range of transmitted or recognized notes. 
-<a name="chartProgramChange"></a>programChange | [recognizeTransmit Object](#recognizeTransmitObject) | Indicate the range of Program Change numbers which are transmitted and/or recognized. If not implemented, enter a “No” in the appropriate column.
+<a name="chartMidiChannels"></a>midiChannels | [recognizeTransmit Object](#recognizeTransmitObject) |  Default range 1-16. The range of MIDI channels that the device transmits, exports, responds to, and/or imports. Devices using extended channel systems via multiple cables or input/output ports should list the total number of channels in the appropriate “Transmitted” or “Recognized” ranges and should use the “name” field in the rangeto indicate the terminology used by the device to identify the extra channels (i.e., “MIDIA, MIDIB”)
+<a name="chartNoteNumbers"></a>noteNumbers | [recognizeTransmit Object](#recognizeTransmitObject) | Default range 0-127. The total range of transmitted or recognized notes. 
+<a name="chartProgramChange"></a>programChange | [recognizeTransmit Object](#recognizeTransmitObject) | Default range 0-127. Indicate the range of Program Change numbers which are transmitted and/or recognized. If not implemented, enter a “No” in the appropriate column.
 <a name="chartBankSelect"></a>bankSelect | [recognizeTransmit Object](#recognizeTransmitObject) | Use a “Yes” or “No” to indicate whether or not the device correctly responds to Bank Select messages as per the MIDI 1.0 Specification. Devices that respond only to Bank Select MSB (cc #0) but not to the LSB (cc #32) should place a "No" in the “Recognized” column and should indicate this in the “Remarks” column. If the device does correctly respond to Bank Select messages, use the “Remarks” column to indicate what banks or ranges of banks are available in the device. If certain banks are accessible only by MIDI (and not by front panel user control), these should be listed in the “Remarks” column.
 <a name="chartMode1"></a>mode1 | [recognizeTransmit Object](#recognizeTransmitObject) | Mode 1: Omni-On, Poly (Yes/No)
 <a name="chartMode2"></a>mode2 | [recognizeTransmit Object](#recognizeTransmitObject) | Mode 2: Omni-On, Mono (Yes/No)
@@ -236,7 +236,7 @@ Field Name | Type | Description
 <a name="RTRangeTransmitRange"></a>transmitRange | [[Range Object](#RangeObject)] | The upper and lower limits. `transmit` MUST be marked as true
 <a name="RTRangeRecognizeRange"></a>recognizeRange | [[Range Object](#RangeObject)] | The upper and lower limits. `recognize` MUST be marked as true
 <a name="recognizeTransmitTransmit"></a>transmit | `boolean` | **Required** Does this transmit this feature.
-<a name="recognizeTransmitRecognize"></a>recognize | `boolean` | **Required** Does this transmit this feature.
+<a name="recognizeTransmitRecognize"></a>recognize | `boolean` | **Required** Does this recognize this feature.
 <a name="RTRangeRemarks"></a>name | `string` | Name of the item. Usefut when used in NRPN's or in CC information where it is not the standard controller function
 <a name="RTRangeRemarks"></a>remarks | `string` | Any further Information.
 
