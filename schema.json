@@ -310,7 +310,7 @@
         "name": {
           "type": "string",
           "description": "Name of the item. Usefut when used in NRPN's or in CC information where it is not the standard controller function."
-        }
+        },
         "remarks": {
           "type": "string",
           "description": "Any further Information"
@@ -554,7 +554,7 @@
         "type": {
           "type": "string"
           ,"description":"The value MUST be one of \"string\", \"number\", \"integer\", \"boolean\" or \"array\". If not set integer is assumed."
-          ,"enum":["string", "number", "integer", "boolean" or "array"]
+          ,"enum":["string", "number", "integer", "boolean", "array"]
         },
         "max": {
           "type": "integer"
