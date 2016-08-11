@@ -449,10 +449,11 @@ Field Name | Type | Description
 ---|:---:|---
 <a name="sysexSampleDumpStandard"></a>sampleDumpStandard | [recognizeTransmit Object](#recognizeTransmitObject) | If True then this device will respond to a Sample Dump Sysex.
 <a name="sysexDeviceEnquiry"></a>deviceEnquiry | [recognizeTransmit Object](#recognizeTransmitObject) | If True then this device will respond to this a [Device Enquiry](#deviceEnquiry).
+<a name="sysexDeviceEnquiryVersion"></a>deviceEnquiryVersion | `string` | The expression on how to build the version number from the 4 version bytes
 <a name="sysexFileDump"></a>fileDump | [recognizeTransmit Object](#recognizeTransmitObject) | If True then this device will respond to a File Dump Sysex.
 <a name="sysexMidiTuning"></a>midiTuning | [recognizeTransmit Object](#recognizeTransmitObject) | If True then this device will respond to a MIDI Tuning Sysex.
-<a name="sysexMasterVolume"></a>midiVolume | [recognizeTransmit Object](#recognizeTransmitObject) | If True then this device will respond to a Master Volume Sysex.
-<a name="sysexMasterBalance"></a>midiBalance | [recognizeTransmit Object](#recognizeTransmitObject) | If True then this device will respond to a Master Balance Sysex.
+<a name="sysexMasterVolume"></a>masterVolume | [recognizeTransmit Object](#recognizeTransmitObject) | If True then this device will respond to a Master Volume Sysex.
+<a name="sysexMasterBalance"></a>masterBalance | [recognizeTransmit Object](#recognizeTransmitObject) | If True then this device will respond to a Master Balance Sysex.
 <a name="sysexExclusiveHeader"></a>exclusiveHeader | `string` | This is the header used on all Sysex queries. This will be an string of hex `"F0 42 3C 57"`.
 <a name="sysexFunctions"></a>functions | [Sysex Functions Object](#sysexFunctionsObject) | This holds the device specific Sysex instruction set
 <a name="sysexDefinitions"></a>definitions | [Sysex Definitions Object](#definitionsObject) | Used generally as way to refactor repeated use of sysex data structures.
@@ -553,13 +554,15 @@ Field Name | Type | Description
 <a name="partsLength"></a>length | `integer` | How many bytes to read. If not set it is assumed to only read 1 byte.
 <a name="partsName"></a>name | `string` | **Required.** The name of this value that is being read or sent.
 <a name="partsType"></a>type | `string` | The value MUST be one of `"string"`, `"number"`, `"integer"`, `"boolean"` or `"array"`. If not set integer is assumed.
-<a name="partsMax"></a>max | `integer` | The maximum number that should be set.
-<a name="partsAddValue"></a>addValue | `integer` | When displaying this data and this value to make it more human friendly.
-<a name="partsMap"></a>map | [`string`] | Map the value to this array of Strings to make it more human friendly.
-<a name="partsItems"></a>items | [Parts Object](#partsObject) | This is required if the type is set to array.
-<a name="partsBits"></a>bits | [`string,integer`] | The bits determines which information from the byte(s) thatis required. [See more](#partbitExplanation) below.
 <a name="partsSuffix"></a>suffix | `string` | This helps for human readability when display the data.
+<a name="partsItems"></a>items | [Parts Object](#partsObject) | This is required if the type is set to array.
+<a name="partsExpr"></a>expr | `string` | The expression to determine the values from the data. [See more](#partExprExplanation) below.
+<a name="partsRevExpr"></a>revExpr | `string` | The expression to determine the data from the values. [See more](#partExprExplanation) below.
+<a name="partsMin"></a>min | `integer` | The minimum number that should be set. Min is checked before after expr and before revExpr.
+<a name="partsMax"></a>max | `integer` | The maximum number that should be set. Max is checked before after expr and before revExpr.
+<a name="partsMap"></a>map | [`string`] | Map the value to this array of Strings to make it more human friendly.
 <a name="partsSchema"></a>schema | [Schema Object](#schemaObject) | The schema defining the type used for the parts parameter. Only use with name, byte and length.
+
 
 ##### Parts Objects 
 
@@ -567,15 +570,27 @@ Field Pattern | Type | Description
 ---|:---:|---
 <a name="operationExtensions"></a>^x- | Any | Allows extensions to the MIS Schema. The field name MUST begin with `x-`, for example, `x-internal-id`. The value can be `null`, a primitive, an array or an object. 
 
-##### <a name="partbitExplanation"></a>Parts Bits Explanation
-A bits array is made up of the bits in the data collected by the bytes and the length.
+##### <a name="partExprExplanation"></a>Parts Expression Explanation
+It is hoped that any MIS library or toolset is able to use the Expression set as defined to make the information in stored in Sysex not only readable but also have the ability to be manipulated and changed easily. With this in mind each part has the use of an `expr` and `revExpr` fields to read and modify data.
+
+Expression are written in normal expression format with bitwise and basic math function:
+* 5 + 4
+* (5 + x) *2
+* floor(x) << 7 & 256
+
+Added to this is a bit function `b()` that make it simpler to get/set specific bit ranges. The expression `b(5,2)` would grab bit 5 and 4 of the byte to get the current value. This could also be written as `(value & 48 )>> 4` or `(value >> 4) & 3`. 
+The first argument is the bit number to start with, the 2nd argument is the length (default to 1 if not present).
+The third argument will set the bits of the current byte(s) from the value provided.
+
 A common example is series of on/off switches such as
+
 ```js
 {
-	"byte": 10,
-	"name": "Delay BPM Sync Stat",
-	"type": "boolean",
-	"bits": [1]
+  "byte":10,
+  "name": "Delay BPM Sync Stat",
+  "type": "boolean",
+  "expr":"b(1)",
+  "revExpr":"b(1,1,val)"
 }
 ```
 
@@ -585,16 +600,17 @@ Bit | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0
 ---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|---
  | 0 | 1 | 1 | 1 | 1 | 1 | 0 | 1
  
- We see that bit 1 is set to O (off).
+We see that bit 1 is set to 0 (off). So getting `b(1)` we get a 0 which equates to boolan false.
  
 A more complex Example is:
 ```js
 {
-	"byte": 0,
-	"length": 2,
-	"name": "Tempo",
-	"type": "number",
-	"bits": [14,6,".",3,0]
+  "byte": 0,
+  "length":2,
+  "name": "Tempo",
+  "format": "float",
+  "expr":"b(14,9) + b(3,4)/10",
+  "revExpr":"b(14,9,floor(val)),b(3,4,(val%1)*10)"
 }
 ```
 
@@ -605,32 +621,22 @@ Bit | 15 | 14 | 13 | 12 | 11 | 10 | 9 | 8 | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0
  | 0 | 0 | 0 | 1 | 1 | 1 | 1 | 1 | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 1 
  
 The documentation states that the Tempo is built using iiiiiiiii00ffff where iiiiiiiii is the Tempo between 20 and 300 and ffff is a decimal place betwen 0 and 9.
-In the bits array we have a start bit (14), followed by an end bit(6), followed by a string ("."), followed by another start bit(3) and another end bit (0).
-If we start with the first bit pair (14,6) we get 001111100 which converts to "124". We then add the "." to get "124.". We get the next bit pair (3,0) and get "5". Together this gives us a Tempo of "124.5", and when we see the type is a number this is converted to `124.5`.
+in the expr we  have a start bit (14), followed by an end bit(6) we get this using `b(14,9)`. We then get bits 3 to 0 (`b(3,4)`) and divide by 10.
+If we start with the first bit pair (14,6) we get 001111100 which converts to "124". We get then add the next bit pair (3,0) and get "5" and divide by 10 getting 0.5. Together this gives us a Tempo of "124.5".
+
+The revExpr tells s how to turn this information back. If we had a tempo of 132.2 it gets the floor of val of 132 and then puts that into bits 14 to 6. It then gets the 0.2 turns it into 2 puts that into bits 3 to 0.
+
+The expressions parser MUST handle the following
+* keywords:
+ * val - revExpr only : The value to use to turn into the byte data
+* functions:
+ * floor
+ * ceil
+ * b : As described above
+* operands - please follow the order of operations guidelines at https://en.wikipedia.org/wiki/Order_of_operations#Programming_language
 
 
 
-##### Parts Object Example
-
-```js
-[
-  {
-	"byte": 0,
-	"length": 2,
-	"name": "Tempo",
-	"type": "number",
-	"bits": [14,6,".",3,0]
-  },
-  {
-	"byte": 2,
-	"name": "Roll Type",
-	"type": "integer",
-	"bits": [7,6],
-	"addValue": 2,
-	"max": 2
-  }
-}
-```
 
 
 

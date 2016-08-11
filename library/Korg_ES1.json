@@ -161,71 +161,57 @@
   },
   
   "sysex": {
-    "identityRequest": true,
-    "deviceIdentityVersionHandle": [
-      "LSB1",
-      "MSB1",
-      "LSB0",
-      "MSB0"
-    ],
-    [
-                7,0,14,8,
-                ".",
-                21,15,28,22
-          ],
+    "deviceEnquiry": true,
+    "deviceEnquiryVersion": "b(24,8)<<7 + b(32,8) + (b(8,8)<<7 + b(16,8))/10",
     "masterVolume": true,
-    "exclusiveHeader":["0xF0","0x42","0x3c","0x57"],
+    "exclusiveHeader":"F0 42 3C 57",
     "functions": {
-        "0x10":{
+        "10":{
           "name": "CURRENT PATTERN DATA DUMP REQUEST"
           ,"recognised":true
         }
-        ,"0x1C":{
+        ,"1C":{
           "name": "ALL PATTERN DATA DUMP REQUEST"
           ,"recognised":true
         }
-        ,"0x0A":{
+        ,"0A":{
           "name": "CURRENT SONG DATA DUMP REQUEST"
           ,"recognised":true
         }
-        ,"0x0B":{
+        ,"0B":{
           "name": "All SONG DATA DUMP REQUEST"
           ,"recognised":true
         }
-        ,"0x0E":{
+        ,"0E":{
           "name": "GLOBAL DATA DUMP REQUEST"
           ,"recognised":true
         }
-        ,"0x11":{
+        ,"11":{
           "name": "PATTERN WRITE REQUEST"
           ,"recognised":true
           ,"parts":[
               {
                 "byte":1
                 ,"name":"Destination Program Number"
-                ,"format":"int"
+                ,"type":"integer"
                 ,"max":127
               }
             ]
         }
-        ,"0x1A":{
+        ,"1A":{
           "name": "SONG WRITE REQUEST"
           ,"recognised":true
           ,"parts":[
              {
                 "byte":0
                 ,"name":"Destination Song No(0~15)"
-                ,"format":"int"
+                ,"type":"integer"
                 ,"max":15
               }
             ]
         }
-        ,"0x4C": {
-          "name": "ALL PATTERN DATA DUMP"
-          ,"transmitted":true
-          ,"parts":[]
-        }
-        ,"0x51": {
+        
+        ,"51": {
           "name": "GLOBAL DATA DUMP"
           ,"transmitted":true
           ,"recognised":true
@@ -234,8 +220,10 @@
                 "byte":0
                 ,"name":"Midi CH "
                 ,"type":"int"
-                ,"max":15
-                ,"addValue": 1
+                ,"max":16
+                ,"min":1
+                ,"expr":"val + 1"
+                ,"revExpr":"val - 1"
               }
               ,{
                 "byte":1
@@ -350,41 +338,36 @@
               }
             ]
         }
-        ,"0x57": {
+        ,"57": {
           "name": "ALL SONG DATA DUMP"
           ,"transmitted":true
           ,"recognised":true
           ,"parts":[]
         }
-        ,"0x58": {
-          "name": "CURRENT SONG DATA DUMP"
-          ,"recognised":true
-          ,"transmitted":true
-          ,"parts":[]
-        }
-        ,"0x26": {
+       
+        ,"26": {
           "name": "DATA FORMAT ERROR"
           ,"transmitted":true
         }
-        ,"0x23": {
+        ,"23": {
           "name": "DATA FORMAT ERROR"
           ,"transmitted":true
         }
-        ,"0x24": {
+        ,"24": {
           "name": "DATA LOAD ERROR"
           ,"transmitted":true
         }
-        ,"0x22": {
+        ,"22": {
           "name": "WRITE ERROR"
           ,"transmitted":true
         }
-        ,"0x21": {
+        ,"21": {
           "name": "WRITE COMPLETED"
           ,"transmitted":true
           
         }
     
-        ,"0x40": {
+        ,"40": {
           "name": "CURRENT PATTERN DATA DUMP"
           ,"recognised":true
           ,"transmitted":true
@@ -394,59 +377,52 @@
               "length":2,
               "name": "Tempo",
               "format": "float",
-              "bits": [
-                14,
-                6,
-                ".",
-                3,
-                0
-              ]
+              "expr":"b(14,9) + b(3,4)/10",
+              "revExpr":"b(14,9,floor(val)),b(3,4,(val%1)*10)",
+              "min":20,
+              "max":300
+              
             },
             {
               "byte":2,
               "name": "Roll Type",
               "type": "integer",
-              "bits": [
-                7,
-                6
-              ],
-              "addValue": 2,
-              "max": 2
+              "expr":"b(7,2) + 1"
+              "revExpr":"b(7,2,val-1)",
+              "max": 3
+              "min": 1
             },
             {
               "byte":2,
               "name": "Scale/Beat",
               "type": "integer",
-              "bits": [
-                5,
-                4
-              ],
+              "expr":"b(5,2)"
+              "revExpr":"b(5,2,val)",
               "map": [
                 "16th",
                 "32nd",
                 "tri",
                 "tr2"
-              ],
-              "max": 3
+              ]
             },
             {
               "byte":2,
               "name": "Pattern Length",
               "type": "integer",
-              "bits": [
-                1,
-                0
-              ],
-              "addValue": 1,
-              "max": 3
+              "expr":"b(1,2) + 1"
+              "revExpr":"b(1,2,val-1)",
+              "max": 4,
+              "min": 1
             },
             {
               "byte":3,
               "name": "Swing",
-              "type": "integer",
-              "addValue": 50,
+              "type": "integer"
               "suffix": "%",
-              "max": 25
+              "expr":"val + 50"
+              "revExpr":"val-50",
+              "max": 50,
+              "min": 75
             },
             {
               "byte":4,
@@ -499,39 +475,30 @@
             {
               "byte":10,
               "name": "Delay BPM Sync Stat",
-              "type": "integer",
-              "bits": [
-                1
-              ],
-              "max": 1
+              "type": "boolean",
+              "expr":"b(1)"
+              "revExpr":"b(1,1,val)"
             },
             {
               "byte":10,
               "name": "Delay MotionSEQ Stat",
-              "type": "integer",
-              "bits": [
-                0
-              ],
-              "max": 1
+              "type": "boolean",
+              "expr":"b(0)",
+              "revExpr":"b(0,1,val)"
             },
             {
               "byte":11,
               "name": "Accent Level",
               "type": "integer",
-              "bits": [
-                6,
-                0
-              ],
-              "max": 127
+              "expr":"b(6,7)",
+              "revExpr":"b(6,7,val)"
             },
             {
               "byte":11,
               "name": "Accent Motion SEQ Stat",
-              "type": "integer",
-              "bits": [
-                7
-              ],
-              "max": 127
+              "type": "boolean",
+              "expr":"b(7)"
+              "revExpr":"b(7,1,val)"
             },
             {
               "byte":12,
@@ -579,23 +546,73 @@
             },
             {
               "byte":268,
-              "length":6,
-              "name": "Part 1 Parameters ",
-              "$ref": "#/sysexDefinitions/parameters"
+              "length":128,
+              "repeat":["Part 1","Part 2","Part 3","Part 4","Part 5","Part 6A","Part 6B","Part 7A","Part 7B","Slice"]
+              
+              "parts":[
+				{
+					"name": "Parameters ",
+					"byte": 0,
+					"length":6,
+					"$ref": "#/sysexDefinitions/parameters"
+				}
+				{
+				  "byte": 6,
+				  "length":8,
+				  "name": "StepSequence Data ",
+				  "$ref": "#/sysexDefinitions/stepSequence"
+				}
+				,{
+				  "byte": 14,
+				  "length":114,
+				  "name": "MotionSequence Data ",
+				  "$ref": "#/sysexDefinitions/motionSequence"
+				}
+              ],
+              
             },
             {
-              "byte": 274,
-              "length":8,
-              "name": "Part 1 StepSequence Data ",
-              "$ref": "#/sysexDefinitions/stepSequence"
-            }
-            ,{
-              "byte": 282,
-              "length":114,
-              "name": "Part 1 MotionSequence Data ",
-              "$ref": "#/sysexDefinitions/motionSequence"
-            }
+					"name": "Audio In Parameters",
+					"byte": 1549,
+					"length":5,
+					"$ref": "#/sysexDefinitions/audioParameters"
+			},
+			{
+					"name": "Audio In StepSequence Data",
+					"byte": 1554,
+					"length":5,
+					"$ref": "#/sysexDefinitions/stepSequence"
+			},
+			{
+					"name": "Audio In MotionSequence Data",
+					"byte": 1562,
+					"length":5,
+					"$ref": "#/sysexDefinitions/audioMotionSequence"
+			},
+			{
+					"name": "Accent StepSequence Data",
+					"byte": 1660,
+					"length":5,
+					"$ref": "#/sysexDefinitions/stepSequence"
+			},
+			{
+					"name": "Accent MotionSequence Data",
+					"byte": 1668,
+					"length":5,
+					"$ref": "#/sysexDefinitions/accentMotionSequence"
+			}
           ]
+        }
+         ,"4C": {
+          "name": "ALL PATTERN DATA DUMP"
+          ,"transmitted":true
+          ,"parts":[]
+        }
+        ,"58": {
+          "name": "CURRENT SONG DATA DUMP"
+          ,"recognised":true
+          ,"transmitted":true
+          ,"parts":[]
         }
       }
     
