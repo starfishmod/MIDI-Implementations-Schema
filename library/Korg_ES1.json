@@ -41,7 +41,7 @@
     ,"mode3": {
 		"recognize": true,
 		"remarks": "Specified by Midi Mode for each part.  00~3F : A01~64, 40~7F : B01~64"
-    }
+    },
     "noteOnVelocity": {
 		"transmit":true,
 		"recognize": true,
@@ -384,16 +384,16 @@
               "byte":2,
               "name": "Roll Type",
               "type": "integer",
-              "expr":"b(7,2) + 1"
+              "expr":"b(7,2) + 1",
               "revExpr":"b(7,2,val-1)",
-              "max": 3
+              "max": 3,
               "min": 1
             },
             {
               "byte":2,
               "name": "Scale/Beat",
               "type": "integer",
-              "expr":"b(5,2)"
+              "expr":"b(5,2)",
               "revExpr":"b(5,2,val)",
               "map": [
                 "16th",
@@ -406,7 +406,7 @@
               "byte":2,
               "name": "Pattern Length",
               "type": "integer",
-              "expr":"b(1,2) + 1"
+              "expr":"b(1,2) + 1",
               "revExpr":"b(1,2,val-1)",
               "max": 4,
               "min": 1
@@ -414,9 +414,9 @@
             {
               "byte":3,
               "name": "Swing",
-              "type": "integer"
+              "type": "integer",
               "suffix": "%",
-              "expr":"val + 50"
+              "expr":"val + 50",
               "revExpr":"val-50",
               "max": 50,
               "min": 75
@@ -473,7 +473,7 @@
               "byte":10,
               "name": "Delay BPM Sync Stat",
               "type": "boolean",
-              "expr":"b(1)"
+              "expr":"b(1)",
               "revExpr":"b(1,1,val)"
             },
             {
@@ -514,7 +514,7 @@
             },
             {
               "byte":140,
-              "repeat":64
+              "repeat":64,
               "name": "Delay Depth MotionSEQ Data",
               
                 "type": "integer",
@@ -523,7 +523,7 @@
             },
             {
              "byte":204,
-              "repeat":64
+              "repeat":64,
               "name": "Delay Time MotionSEQ Data",
               "type": "integer",
                 "max": 127
@@ -533,7 +533,7 @@
               "byte":268,
               "length":128,
               "repeat":10,
-              "repeatTitles":["Part 1","Part 2","Part 3","Part 4","Part 5","Part 6A","Part 6B","Part 7A","Part 7B","Slice"]
+              "repeatTitles":["Part 1","Part 2","Part 3","Part 4","Part 5","Part 6A","Part 6B","Part 7A","Part 7B","Slice"],
               
               "parts":[
 				{
@@ -609,14 +609,14 @@
         {
           "byte":0
           ,"repeat":64
-          ,"name": "Step"
+          ,"name": "Step",
           "type": "boolean",
           "expr":"b(7)",
           "revExpr":"b(7,1,val)"
         }
         ,{
           "byte":0
-          ,"repeat":64
+          ,"repeat":64,
           ,"name": "Step Value"
           "type": "integer",
           "expr":"b(6,6)",
