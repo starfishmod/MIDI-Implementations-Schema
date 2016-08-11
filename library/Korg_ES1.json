@@ -45,8 +45,8 @@
     "noteOnVelocity": {
 		"transmit":true,
 		"recognize": true,
-		"transmittedRange": [{start:30,stop:127}],
-		"recognisedRange": [{start:1,stop:127}],
+		"transmittedRange": [{"start":30,"stop":127}],
+		"recognisedRange": [{"start":1,"stop":127}],
 		"remarks": "Transmitted Velocity is specified by accent amount"
     },
     "noteOffVelocity": {
@@ -78,8 +78,8 @@
 	"songSelect": {
 		"transmit":true,
 		"recognize": true,
-		"transmittedRange": [{start:0,stop:15}],
-		"recognisedRange": [{start:0,stop:15}],
+		"transmittedRange": [{"start":0,"stop":15}],
+		"recognisedRange": [{"start":0,"stop":15}],
     },
 	"start": {
 		"transmit":true,
@@ -96,7 +96,7 @@
   },
   "controllers":{
 	"CC":{
-		'121':{
+		"121":{
 			"recognize": true
 		}
 	},
@@ -327,14 +327,11 @@
               }
               ,{
                 "byte":64,
-                "length":64
-                ,"name":"Pattern Set Parameters "
-                ,"type": "array",
-                    "items": {
-                      "byte": 0,
-                      "type": "integer",
-                      "max": 127
-                }
+                "length":1,
+                "repeat":64
+                ,"type":"integer"
+                ,"name":"Pattern Set Parameters"
+                ,"max":127
               }
             ]
         }
@@ -497,57 +494,46 @@
               "byte":11,
               "name": "Accent Motion SEQ Stat",
               "type": "boolean",
-              "expr":"b(7)"
+              "expr":"b(7)",
               "revExpr":"b(7,1,val)"
             },
             {
               "byte":12,
-              "length":64,
+              "repeat":64,
               "name": "Fx Edit 1 MotionSEQ Data",
-              "type": "array",
-              "items": {
-                "byte":0,
-                "type": "integer",
-                "max": 127
-              }
+              "type": "integer",
+              "max":127
             },
             {
               "byte":76,
-              "length":64,
+              "repeat":64,
               "name": "Fx Edit 2 MotionSEQ Data",
-              "format": "array",
-              "items": {
-                "byte":0,
-                "type": "integer",
-                "max": 127
-              }
+              "type": "integer",
+              "max": 127
+              
             },
             {
               "byte":140,
-              "length":64
+              "repeat":64
               "name": "Delay Depth MotionSEQ Data",
-              "format": "array",
-              "items": {
-                "byte":0,
+              
                 "type": "integer",
                 "max": 127
-              }
+              
             },
             {
              "byte":204,
-              "length":64
+              "repeat":64
               "name": "Delay Time MotionSEQ Data",
-              "format": "array",
-              "items": {
-                "byte":0,
-                "type": "integer",
+              "type": "integer",
                 "max": 127
-              }
+              
             },
             {
               "byte":268,
               "length":128,
-              "repeat":["Part 1","Part 2","Part 3","Part 4","Part 5","Part 6A","Part 6B","Part 7A","Part 7B","Slice"]
+              "repeat":10,
+              "repeatTitles":["Part 1","Part 2","Part 3","Part 4","Part 5","Part 6A","Part 6B","Part 7A","Part 7B","Slice"]
               
               "parts":[
 				{
@@ -622,11 +608,20 @@
       "parts": [
         {
           "byte":0
-          ,"name": "Step 1"
-          , "bits": [0]
-          ,"type":"boolean"
+          ,"repeat":64
+          ,"name": "Step"
+          "type": "boolean",
+          "expr":"b(7)",
+          "revExpr":"b(7,1,val)"
         }
-        
+        ,{
+          "byte":0
+          ,"repeat":64
+          ,"name": "Step Value"
+          "type": "integer",
+          "expr":"b(6,6)",
+          "revExpr":"b(6,6,val)"
+        }
         ]
     }
     ,
