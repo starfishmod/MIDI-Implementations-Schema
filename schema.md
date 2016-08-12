@@ -684,7 +684,7 @@ Field Pattern | Type | Description
 			"byte": 0,
 			"length":6,
 			"schema": {
-				"$ref": "#/sysexDefinitions/parameters"
+				"$ref": "#/sysex/definitions/parameters"
 			}
 		},
 		{
@@ -692,7 +692,7 @@ Field Pattern | Type | Description
 			"length": 8,
 			"name": "StepSequence Data ",
 			"schema": {
-				"$ref": "#/sysexDefinitions/stepSequence"
+				"$ref": "#/sysex/definitions/stepSequence"
 			}
 		},
 		{
@@ -700,7 +700,7 @@ Field Pattern | Type | Description
 			"length": 114,
 			"name": "MotionSequence Data ",
 			"schema": {
-				"$ref": "#/sysexDefinitions/motionSequence"
+				"$ref": "#/sysex/definitions/motionSequence"
 			}
 		}
 	]
@@ -768,7 +768,9 @@ Field Pattern | Type | Description
 	"byte": 268,
 	"length": 6,
 	"name": "Part 1 Parameters ",
-	"$ref": "#/sysex/definitions/parameters"
+	"schema": {
+		"$ref": "#/sysex/definitions/parameters"
+	}
 }
 ```
 
