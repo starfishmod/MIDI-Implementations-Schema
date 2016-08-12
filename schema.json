@@ -62,7 +62,7 @@
         },
         "date": {
           "type": "string",
-          "format":"date",
+          "format": "date",
           "description": "The date of this MIS."
         },
         "documentVersion": {
@@ -71,7 +71,7 @@
         },
         "deviceVersions": {
           "type": "array",
-            "items": {
+          "items": {
             "type": "string"
           },
           "uniqueItems": true,
@@ -83,7 +83,7 @@
         },
         "contributors": {
           "type": "array",
-            "items": {
+          "items": {
             "type": "string"
           },
           "uniqueItems": true,
@@ -128,15 +128,12 @@
         "programChange": {
           "$ref": "#/definitions/recognizeTransmit"
         },
-          
         "bankSelect": {
           "$ref": "#/definitions/recognizeTransmit"
         },
-          
         "mode1": {
           "$ref": "#/definitions/recognizeTransmit"
         },
-          
         "mode2": {
           "$ref": "#/definitions/recognizeTransmit"
         },
@@ -167,31 +164,27 @@
         "systemReset": {
           "$ref": "#/definitions/recognizeTransmit"
         },
-          
         "tuneRequest": {
           "$ref": "#/definitions/recognizeTransmit"
         },
-          
-          
         "midiClock": {
           "$ref": "#/definitions/recognizeTransmit"
         },
-          
         "songPos": {
           "$ref": "#/definitions/recognizeTransmit"
-        },  
+        },
         "songSelect": {
           "$ref": "#/definitions/recognizeTransmit"
-        },  
+        },
         "start": {
           "$ref": "#/definitions/recognizeTransmit"
-        },  
+        },
         "continue": {
           "$ref": "#/definitions/recognizeTransmit"
-        },  
+        },
         "stop": {
           "$ref": "#/definitions/recognizeTransmit"
-        },  
+        },
         "MTC": {
           "$ref": "#/definitions/recognizeTransmit"
         },
@@ -205,8 +198,11 @@
           "type": "array",
           "items": {
             "type": "string",
-            "enum" : ["GM","GM2","GMLite"]
-            
+            "enum": [
+              "GM",
+              "GM2",
+              "GMLite"
+            ]
           },
           "uniqueItems": true
         },
@@ -214,8 +210,11 @@
           "type": "array",
           "items": {
             "type": "string",
-            "enum" : ["DLS","DLS2","MobileDLS"]
-            
+            "enum": [
+              "DLS",
+              "DLS2",
+              "MobileDLS"
+            ]
           },
           "uniqueItems": true
         },
@@ -223,8 +222,11 @@
           "type": "array",
           "items": {
             "type": "integer",
-            "enum" : [0,1,2]
-            
+            "enum": [
+              0,
+              1,
+              2
+            ]
           },
           "uniqueItems": true
         },
@@ -238,7 +240,7 @@
         }
       }
     },
-    "Controllers": {
+    "controllers": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -246,17 +248,14 @@
           "$ref": "#/definitions/CCList"
         },
         "NRPN": {
-          "$ref": "#/definitions/NRPN"
+          "$ref": "#/definitions/NRPNList"
         },
-        
         "RPN00": {
           "$ref": "#/definitions/recognizeTransmit"
         },
-          
         "RPN01": {
           "$ref": "#/definitions/recognizeTransmit"
         },
-          
         "RPN02": {
           "$ref": "#/definitions/recognizeTransmit"
         },
@@ -275,19 +274,17 @@
           "$ref": "#/definitions/vendorExtension"
         }
       }
-    },  
-      
-      
+    },
     "recognizeTransmit": {
       "type": "object",
       "description": "Object for describing range in the Transmit/Export, Recognize/Import and Remarks columns in the MIDI Implementation Chart. Except this can have multiple ranges for different groups.",
       "additionalProperties": false,
-      "required":[
-		"transmit",
-		"recognize"
+      "required": [
+        "transmit",
+        "recognize"
       ],
       "properties": {
-		"transmit": {
+        "transmit": {
           "type": "boolean",
           "description": "If not set as true then it assumed false."
         },
@@ -322,21 +319,20 @@
         }
       }
     },
-    
     "Range": {
       "type": "object",
       "description": "Object for describing range.",
       "additionalProperties": false,
-      "required":[
-        "start"
-        ,"stop"
+      "required": [
+        "start",
+        "stop"
       ],
       "properties": {
         "start": {
           "type": "integer",
           "description": "The lower limit"
         },
-        "start": {
+        "stop": {
           "type": "integer",
           "description": "The upper limit"
         },
@@ -350,8 +346,7 @@
           "$ref": "#/definitions/vendorExtension"
         }
       }
-    },  
-      
+    },
     "CCList": {
       "type": "object",
       "description": "A list of the MIDI control change parameters available.",
@@ -359,21 +354,20 @@
         "^x-": {
           "$ref": "#/definitions/vendorExtension"
         },
-        "^/[0-9]{1,3}": {
-          "$ref": "#/definitions/RTBoolean"
+        "^[0-9]{1,3}": {
+          "$ref": "#/definitions/recognizeTransmit"
         }
       },
       "additionalProperties": false
     },
-    "NRPN": {
+    "NRPNList": {
       "type": "object",
       "description": "A list of the MIDI NRPN parameters available.",
-        
       "patternProperties": {
         "^x-": {
           "$ref": "#/definitions/vendorExtension"
         },
-        "^/[0-9a-f]{2} [0-9a-f]{2}": {
+        "^[0-9a-f]{2} [0-9a-f]{2}": {
           "$ref": "#/definitions/NRPNItem"
         }
       },
@@ -382,24 +376,52 @@
     "NRPNItem": {
       "type": "object",
       "description": "Describes how the NRPN Data works",
-      "required":["name"],
+      "required": [
+        "name",
+        "transmit",
+        "recognize"
+      ],
       "properties": {
         "name": {
           "type": "string",
           "description": "The name of this value that is being read or sent."
         },
+        "type": {
+          "type": "string",
+          "description": "The value MUST be one of \"string\", \"number\", \"integer\" or \"boolean\". If not set integer is assumed.",
+          "enum": [
+            "string",
+            "number",
+            "integer",
+            "boolean"
+          ]
+        },
+        "format": {
+          "type": "string",
+          "description": "This is the format of the data returned. i.e. note."
+        },
+        "expr": {
+          "type": "string",
+          "format": "expr",
+          "description": "The expression to determine the values from the data"
+        },
+        "revExpr": {
+          "type": "string",
+          "format": "expr",
+          "description": "The expression to determine the data from the values"
+        },
         "max": {
           "type": "integer",
-          "description": "The maximum number that should be set."
+          "description": "The maximum number that should be set. Max is checked before after expr and before revExpr."
         },
-        "addValue": {
+        "min": {
           "type": "integer",
-          "description": "When displaying this data and this value to make it more human friendly."
+          "description": "The minimum number that should be set. Min is checked before after expr and before revExpr."
         },
         "map": {
           "type": "array",
-          "items":{
-            "type":"string"
+          "items": {
+            "type": "string"
           },
           "description": "Map the value to this array of Strings to make it more human friendly."
         },
@@ -422,12 +444,11 @@
         }
       },
       "additionalProperties": false
-    }, 
+    },
     "sysex": {
       "type": "object",
       "description": "Object for describing the Sysex available to the device.",
       "additionalProperties": false,
-      
       "properties": {
         "sampleDumpStandard": {
           "$ref": "#/definitions/recognizeTransmit"
@@ -435,47 +456,50 @@
         "deviceEnquiry": {
           "$ref": "#/definitions/recognizeTransmit"
         },
+        "deviceEnquiryVersion": {
+          "type": "string",
+          "format": "expr",
+          "description": "The expression on how to build the version number from the 4 version bytes"
+        },
         "fileDump": {
           "$ref": "#/definitions/recognizeTransmit"
         },
         "midiTuning": {
           "$ref": "#/definitions/recognizeTransmit"
-        },  
-        "midiVolume": {
+        },
+        "masterVolume": {
           "$ref": "#/definitions/recognizeTransmit"
         },
         "midiBalance": {
           "$ref": "#/definitions/recognizeTransmit"
         },
-        
-          
         "exclusiveHeader": {
           "type": "string",
-          "format":"hex",
-          "description": "This is the header used on all Sysex queries. This will be an string of hex \"F0 42 3C 57\""
+          "format": "hex",
+          "description": "This is the header used on all Sysex queries. This will be an string of hex e.g. \"F0 42 3C 57\""
         },
+        
         "functions": {
           "$ref": "#/definitions/sysexFunction"
         },
         "definitions": {
           "$ref": "#/definitions/sysexDefinitions"
-        },
+        }
       },
       "patternProperties": {
         "^x-": {
           "$ref": "#/definitions/vendorExtension"
         }
       }
-    },  
+    },
     "sysexFunction": {
       "type": "object",
       "description": "Holds the relative paths to the individual Sysex calls as given by the Function Id.",
-        
       "patternProperties": {
         "^x-": {
           "$ref": "#/definitions/vendorExtension"
         },
-        "^/[0-9a-f]{2}": {
+        "^[0-9A-F]{2}": {
           "$ref": "#/definitions/sysexFunctionItem"
         }
       },
@@ -485,17 +509,17 @@
       "type": "object",
       "description": "Describes the operations available for a single function.",
       "additionalProperties": false,
-      "required":[
-        "name"
+      "required": [
+        "name",
+        "recognize",
+        "transmit"
       ],
       "properties": {
         "name": {
           "type": "string",
           "description": "What is the intended purpose of this Function"
         },
-        
-          
-        "recognized": {
+        "recognize": {
           "type": "boolean",
           "description": "Does the device recogize this functions data"
         },
@@ -504,10 +528,10 @@
           "description": "Does the device recogize this functions data"
         },
         "parts": {
-          "type":"array",
+          "type": "array",
           "description": "A breakdown of the parts in the sysex data.",
-          "items":{
-          	"$ref": "#/definitions/parts"
+          "items": {
+            "$ref": "#/definitions/parts"
           }
         }
       },
@@ -516,22 +540,31 @@
           "$ref": "#/definitions/vendorExtension"
         }
       }
-    },  
+    },
+    
     "sysexDefinitions": {
       "type": "object",
-      "additionalProperties": {
-        "$ref": "#/definitions/schema"
+      "description": "Holds the relative paths to the individual Sysex calls as given by the Function Id.",
+      "patternProperties": {
+        "^x-": {
+          "$ref": "#/definitions/vendorExtension"
+        },
+        "^[0-9a-zA-Z]": {
+          "type": "array",
+          "description": "A breakdown of the parts in the sysex data.",
+          "items": {
+            "$ref": "#/definitions/parts"
+          }
+        }
       },
-      "description": "One or more JSON objects describing the schemas being consumed and produced by the MIS."
-    },  
-    
-    
+      "additionalProperties": false
+    },
     "parts": {
       "type": "object",
       "additionalProperties": false,
-      "required":[
-		"byte",
-		"name"
+      "required": [
+        "byte",
+        "name"
       ],
       "patternProperties": {
         "^x-": {
@@ -540,76 +573,88 @@
       },
       "properties": {
         "byte": {
-          "type": "integer"
-          ,"description":"The byte count after the ExclusiveHeader and the Function Id starting from 0 that you wish to read"
+          "type": "integer",
+          "description": "The byte count after the ExclusiveHeader and the Function Id starting from 0 that you wish to read"
         },
         "length": {
-          "type": "integer"
-          ,"description":"How many bytes to read. If not set it is assumed to only read 1 byte."
+          "type": "integer",
+          "description": "How many bytes to read. If not set it is assumed to only read 1 byte."
         },
         "name": {
-          "type": "string"
-          ,"description":"How many bytes to read. If not set it is assumed to only read 1 byte."
+          "type": "string",
+          "description": "How many bytes to read. If not set it is assumed to only read 1 byte."
         },
         "type": {
-          "type": "string"
-          ,"description":"The value MUST be one of \"string\", \"number\", \"integer\", \"boolean\" or \"array\". If not set integer is assumed."
-          ,"enum":["string", "number", "integer", "boolean", "array"]
+          "type": "string",
+          "description": "The value MUST be one of \"string\", \"number\", \"integer\" or \"boolean\". If not set integer is assumed.",
+          "enum": [
+            "string",
+            "number",
+            "integer",
+            "boolean"
+          ]
+        },
+         "format": {
+          "type": "string",
+          "description": "This is the format of the data returned. i.e. note."
+        },
+        "expr": {
+          "type": "string",
+          "format": "expr",
+          "description": "The expression to determine the values from the data"
+        },
+        "revExpr": {
+          "type": "string",
+          "format": "expr",
+          "description": "The expression to determine the data from the values"
         },
         "max": {
-          "type": "integer"
-          ,"description":"The maximum number that should be set."
+          "type": "integer",
+          "description": "The maximum number that should be set. Max is checked before after expr and before revExpr."
         },
-        "addValue": {
-          "type": "integer"
-          ,"description":"When displaying this data and this value to make it more human friendly."
+        "min": {
+          "type": "integer",
+          "description": "The minimum number that should be set. Min is checked before after expr and before revExpr."
         },
         "map": {
-          "type": "array"
-          ,"items":{
-			"type": "string"
-          }
-          ,"description":"Map the value to this array of Strings to make it more human friendly."
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Map the value to this array of Strings to make it more human friendly."
+        },
+        "repeat": {
+          "type": "integer",
+          "description": "How many times are we going to read this byte and length. This is useful where the docmentation ask to read x amount of the same param."
+        },
+        "repeatTitles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "The title of each repeat. The length of this array MUST match the repeat value."
         },
         "parts": {
-          "type": "array"
-          ,"items":{
-			"$ref": "#/definitions/parts"
-          }
-          ,"description":"This is required if the type is set to array."
-        },
-        "bits": {
-          "type": "array"
-          ,"items":{
-			"oneOf": [
-				{
-				  "type": "integer"
-				},
-				{
-				  "type": "string"
-				}
-			  ]
-          }
-          ,"description":"The bits determines which information from the byte(s) thatis required"
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/parts"
+          },
+          "description": "This is required if the type is set to array."
         },
         "suffix": {
-          "type": "string"
-          ,"description":"This helps for human readability when display the data."
+          "type": "string",
+          "description": "This helps for human readability when display the data."
         },
-        
         "schema": {
           "$ref": "#/definitions/schema"
         }
       }
     },
-    
-    
     "vendorExtension": {
       "description": "Any property starting with x- is valid.",
       "additionalProperties": true,
       "additionalItems": true
     },
-    
     "schema": {
       "type": "object",
       "description": "A deterministic version of a JSON Schema object.",
@@ -628,7 +673,5 @@
       },
       "additionalProperties": false
     }
-    
-    
   }
 }

@@ -178,7 +178,7 @@ This describes the basic MIDI implementation of the device.
 
 Field Name | Type | Description
 ---|:---:|---
-<a name="chartMidiChannels"></a>midiChannels | [recognizeTransmit Object](#recognizeTransmitObject) |  Default range 1-16. The range of MIDI channels that the device transmits, exports, responds to, and/or imports. Devices using extended channel systems via multiple cables or input/output ports should list the total number of channels in the appropriate “Transmitted” or “Recognized” ranges and should use the “name” field in the rangeto indicate the terminology used by the device to identify the extra channels (i.e., “MIDIA, MIDIB”)
+<a name="chartMidiChannels"></a>midiChannels | [recognizeTransmit Object](#recognizeTransmitObject) |  Default range 1-16. The range of MIDI channels that the device transmits, exports, responds to, and/or imports. Devices using extended channel systems via multiple cables or input/output ports should list the total number of channels in the appropriate “transmit” or “Recognized” ranges and should use the “name” field in the rangeto indicate the terminology used by the device to identify the extra channels (i.e., “MIDIA, MIDIB”)
 <a name="chartNoteNumbers"></a>noteNumbers | [recognizeTransmit Object](#recognizeTransmitObject) | Default range 0-127. The total range of transmitted or recognized notes. 
 <a name="chartProgramChange"></a>programChange | [recognizeTransmit Object](#recognizeTransmitObject) | Default range 0-127. Indicate the range of Program Change numbers which are transmitted and/or recognized. If not implemented, enter a “No” in the appropriate column.
 <a name="chartBankSelect"></a>bankSelect | [recognizeTransmit Object](#recognizeTransmitObject) | Use a “Yes” or “No” to indicate whether or not the device correctly responds to Bank Select messages as per the MIDI 1.0 Specification. Devices that respond only to Bank Select MSB (cc #0) but not to the LSB (cc #32) should place a "No" in the “Recognized” column and should indicate this in the “Remarks” column. If the device does correctly respond to Bank Select messages, use the “Remarks” column to indicate what banks or ranges of banks are available in the device. If certain banks are accessible only by MIDI (and not by front panel user control), these should be listed in the “Remarks” column.
@@ -220,8 +220,62 @@ Field Pattern | Type | Description
 
 ```js
 {
-  
-  
+	"midiChannels": {
+		"transmit":true,
+		"recognize": true,
+		"remarks": "Memorized"
+    },
+    "noteNumbers": {
+		"transmit":true,
+		"recognize": true,
+		"remarks": "Specified by Midi Mode for each part"
+	}
+    ,"programChange": {
+		"transmit":true,
+		"recognize": true,
+		"remarks": "Specified by Midi Mode for each part.  00~3F : A01~64, 40~7F : B01~64"
+    }
+    ,"mode3": {
+		"recognize": true
+    },
+    "noteOnVelocity": {
+		"transmit":true,
+		"recognize": true,
+		"transmittedRange": [{"start":30,"stop":127}],
+		"recognizedRange": [{"start":1,"stop":127}],
+		"remarks": "Transmitted Velocity is specified by accent amount"
+    },
+    "midiClock": {
+		"transmit":true,
+		"recognize": true
+    },
+    "activeSense": {
+		"transmit":true,
+		"recognize": true,
+    },
+    "songPos": {
+		"transmit":true,
+		"recognize": true,
+		"remarks": "Only in Song Mode"
+    },
+	"songSelect": {
+		"transmit":true,
+		"recognize": true,
+		"transmittedRange": [{"start":0,"stop":15}],
+		"recognizedRange": [{"start":0,"stop":15}],
+    },
+	"start": {
+		"transmit":true,
+		"recognize": true
+    },
+    "continue": {
+		"transmit":true,
+		"recognize": true
+    },
+    "stop": {
+		"transmit":true,
+		"recognize": true
+    }
 }
 ```
 
@@ -237,7 +291,7 @@ Field Name | Type | Description
 <a name="RTRangeRecognizeRange"></a>recognizeRange | [[Range Object](#RangeObject)] | The upper and lower limits. `recognize` MUST be marked as true
 <a name="recognizeTransmitTransmit"></a>transmit | `boolean` | **Required** Does this transmit this feature.
 <a name="recognizeTransmitRecognize"></a>recognize | `boolean` | **Required** Does this recognize this feature.
-<a name="RTRangeRemarks"></a>name | `string` | Name of the item. Usefut when used in NRPN's or in CC information where it is not the standard controller function
+<a name="RTRangeRemarks"></a>name | `string` | Name of the item. Useful when used in NRPN's or in CC information where it is not the standard controller function
 <a name="RTRangeRemarks"></a>remarks | `string` | Any further Information.
 
 ##### Patterned Objects 
@@ -253,14 +307,14 @@ Field Pattern | Type | Description
   "transmit":true,
   "transmitRange": [
 	  {
-		start:0,
-		stop:16,
-		name:"MIDI A",
+		"start":0,
+		"stop":16,
+		"name":"MIDI A"
 	  },
 	  {
-		start:0,
-		stop:16,
-		name:"MIDI B",
+		"start":0,
+		"stop":16,
+		"name":"MIDI B"
 	  }
   ]
 }
@@ -290,9 +344,9 @@ Field Pattern | Type | Description
 
 ```js
 {
-	start:0,
-	stop:16,
-	name:"MIDI A",
+	"start":0,
+	"stop":16,
+	"name":"MIDI A"
 }
 ```
 
@@ -306,7 +360,7 @@ This describes the controllers available for the MIDI device.
 Field Name | Type | Description
 ---|:---:|---
 <a name="controllerCC"></a>CC | [CCList Object](#ccListObject) | A description of the MIDI control change parameters available
-<a name="controllerNRPN"></a>NRPN | [NRPN Object](#nrpnObject) | NRPN messages
+<a name="controllerNRPN"></a>NRPN | [NRPNList Object](#nrpnListObject) | NRPN messages
 <a name="controllerRPN00"></a>RPN00 | [recognizeTransmit Object](#recognizeTransmitObject) | RPN 00 (Pitch Bend Sensitivity) (Yes/No)
 <a name="controllerRPN01"></a>RPN01 | [recognizeTransmit Object](#recognizeTransmitObject) | RPN 01 (Channel Fine Tune) (Yes/No)
 <a name="controllerRPN02"></a>RPN02 | [recognizeTransmit Object](#recognizeTransmitObject) | RPN 02 (Channel Coarse Tune) (Yes/No)
@@ -325,24 +379,24 @@ Field Pattern | Type | Description
 
 ```js
 {
-  'CC':{
-	'1':{
-		"transmitted":true
-		,"recognised":true
+  "CC":{
+	"1":{
+		"transmit":true
+		,"recognize":true
 	}
   }
-  ,'NRPN':{
+  ,"NRPN":{
 	"05 07":{
 		"name":"Part 1 Motion Seq Type"
-		,"transmitted":true
-		,"recognised":true
+		,"transmit":true
+		,"recognize":true
 		,"map":["Off","Smooth","TrigHold"]
 		,"MSBOnly":true
 	  }
   }
-  ,RPN00:{
-	"transmitted":true
-	,"recognised":true
+  ,"RPN00":{
+	"transmit":true
+	,"recognize":true
   }
   
 }
@@ -358,22 +412,22 @@ A list of the MIDI control change parameters available.
 
 Field Pattern | Type | Description
 ---|:---:|---
-<a name="ccnumcList"></a>/{ccNum} | [recognizeTransmit Object](#recognizeTransmitObject) | **Required.** A CC number between 0-127.
+<a name="ccnumcList"></a>{ccNum} | [recognizeTransmit Object](#recognizeTransmitObject) | **Required.** A CC number between 0-127.
 <a name="ccListExtensions"></a>^x- | Any | Allows extensions to the MIS Schema. The field name MUST begin with `x-`, for example, `x-internal-id`. The value can be `null`, a primitive, an array or an object. 
 
 ##### CC List Object Example:
 
 ```js
 {
-  '1':{
-	"transmitted":true
-    ,"recognised":true
+  "1":{
+	"transmit":true
+    ,"recognize":true
   }
   
 }
 ```
 
-#### <a name="nrpnObject"></a>NRPN Object
+#### <a name="nrpnListObject"></a>NRPN List Object
 
 A list of the MIDI NRPN parameters available.
 
@@ -391,8 +445,8 @@ Field Pattern | Type | Description
 {
 	"05 07":{
 		"name":"Part 1 Motion Seq Type"
-		,"transmitted":true
-		,"recognised":true
+		,"transmit":true
+		,"recognize":true
 		,"map":["Off","Smooth","TrigHold"]
 		,"MSBOnly":true
 	}
@@ -408,13 +462,18 @@ Describes how the NRPN Data works
 Field Name | Type | Description
 ---|:---:|---
 <a name="nrpnItemName"></a>name | `string` | **Required.** The name of this value that is being read or sent.
-<a name="nrpnItemMax"></a>max | `integer` | The maximum number that should be set.
-<a name="nrpnItemAddValue"></a>addValue | `integer` | When displaying this data and this value to make it more human friendly.
+<a name="nrpnItemTransmit"></a>transmit | `boolean` | **Required.**  Does the device transmit this?
+<a name="nrpnItemRecognize"></a>recognize | `boolean` | **Required.**  Does the device recogize this?
+<a name="nrpnItemType"></a>type | `string` | The value MUST be one of `"string"`, `"number"`, `"integer"` or `"boolean"`. If not set integer is assumed.
+<a name="nrpnItemFormat"></a>format | `string` | this is the format of the data returned. i.e. `note`.
+<a name="nrpnItemExpr"></a>expr | `string` | The expression to determine the values from the data. [See more](#partExprExplanation) below.
+<a name="nrpnItemRevExpr"></a>revExpr | `string` | The expression to determine the data from the values. [See more](#partExprExplanation) below.
+<a name="nrpnItemMin"></a>min | `integer` | The minimum number that should be set. Min is checked before after expr and before revExpr.
+<a name="nrpnItemMax"></a>max | `integer` | The maximum number that should be set. Max is checked before after expr and before revExpr.
 <a name="nrpnItemMap"></a>map | [`string`] | Map the value to this array of Strings to make it more human friendly.
 <a name="nrpnItemSuffix"></a>suffix | `string` | This helps for human readability when display the data.
 <a name="nrpnItemMSBOnly"></a>MSBOnly | `boolean` | Only use the MSB of the NRPN. Assume LSB is not sent.
-<a name="nrpnItemTransmit"></a>transmit | `boolean` | If not set as true then it assumed false.
-<a name="nrpnItemRecognize"></a>recognize | `boolean` | If not set as true then it assumed false.
+
 
 
 ##### Parts Objects 
@@ -430,14 +489,12 @@ Field Pattern | Type | Description
 ```js
 {
 	"name":"Part 1 Motion Seq Type"
-	,"transmitted":true
-	,"recognised":true
+	,"transmit":true
+	,"recognize":true
 	,"map":["Off","Smooth","TrigHold"]
 	,"MSBOnly":true
 }
 ```
-
-
 
 #### <a name="sysexObject"></a>Sysex Object
 
@@ -454,9 +511,9 @@ Field Name | Type | Description
 <a name="sysexMidiTuning"></a>midiTuning | [recognizeTransmit Object](#recognizeTransmitObject) | If True then this device will respond to a MIDI Tuning Sysex.
 <a name="sysexMasterVolume"></a>masterVolume | [recognizeTransmit Object](#recognizeTransmitObject) | If True then this device will respond to a Master Volume Sysex.
 <a name="sysexMasterBalance"></a>masterBalance | [recognizeTransmit Object](#recognizeTransmitObject) | If True then this device will respond to a Master Balance Sysex.
-<a name="sysexExclusiveHeader"></a>exclusiveHeader | `string` | This is the header used on all Sysex queries. This will be an string of hex `"F0 42 3C 57"`.
-<a name="sysexFunctions"></a>functions | [Sysex Functions Object](#sysexFunctionsObject) | This holds the device specific Sysex instruction set
-<a name="sysexDefinitions"></a>definitions | [Sysex Definitions Object](#definitionsObject) | Used generally as way to refactor repeated use of sysex data structures.
+<a name="sysexExclusiveHeader"></a>exclusiveHeader | `string` | This is the header used on all Sysex queries. This will be an string of hex e.g. `"F0 42 3C 57"`.
+<a name="sysexFunctionsList"></a>functions | [Sysex Functions List Object](#sysexFunctionsListObject) | This holds the device specific Sysex instruction set
+<a name="sysexDefinitions"></a>definitions | [Sysex Definitions Object](#sysexDefinitionsObject) | Used generally as way to refactor repeated use of sysex data structures.
 
 ##### Patterned Objects 
 
@@ -478,14 +535,14 @@ Field Pattern | Type | Description
   "functions": {
         "10":{
           "name": "CURRENT PATTERN DATA DUMP REQUEST"
-          ,"recognised":true
+          ,"recognize":true
         }
    }
   
 }
 ```
 
-#### <a name="sysexFunctionsObject"></a>Sysex Functions Object
+#### <a name="sysexFunctionsListObject"></a>Sysex Functions List Object
 
 Holds the relative paths to the individual Sysex calls as given by the Function Id.
 
@@ -493,7 +550,7 @@ Holds the relative paths to the individual Sysex calls as given by the Function 
 
 Field Pattern | Type | Description
 ---|:---:|---
-<a name="functionIdSysexFunction"></a>/{functionId} | [Sysex Function Item Object](#sysexFunctionItemObject) | **Required.** An indivdual function Id call. This should be a hex of the Function Id e.g. `4C`
+<a name="functionIdSysexFunction"></a>{functionId} | [Sysex Function Item Object](#sysexFunctionItemObject) | **Required.** An indivdual function Id call. This should be a hex of the Function Id e.g. `4C`
 <a name="SysexFunctionExtensions"></a>^x- | Any | Allows extensions to the MIS Schema. The field name MUST begin with `x-`, for example, `x-internal-id`. The value can be `null`, a primitive, an array or an object. 
 
 ##### Sysex Functions Object Example
@@ -502,7 +559,7 @@ Field Pattern | Type | Description
 {
 	"10":{
 	  "name": "CURRENT PATTERN DATA DUMP REQUEST"
-	  ,"recognised":true
+	  ,"recognize":true
 	}
 }
 ```
@@ -516,7 +573,7 @@ Describes the operations available for a single function.
 Field Name | Type | Description
 ---|:---:|---
 <a name="sysexFunctionItemName"></a>name | `string` | **Required.** What is the intended purpose of this Function
-<a name="sysexFunctionItemRecognized"></a>recognized | `boolean` | Does the device recogize this functions data
+<a name="sysexFunctionItemRecognize"></a>recognize | `boolean` | Does the device recogize this functions data
 <a name="sysexFunctionItemTransmit"></a>transmit | `boolean` | Does the device transmit this functions data
 <a name="sysexFunctionItemParts"></a>parts | [[Parts Object](#PartsObject)] | A breakdown of the parts in the sysex data.
 
@@ -531,7 +588,7 @@ Field Pattern | Type | Description
 ```js
 {
   "name": "PATTERN WRITE REQUEST"
-  ,"recognised":true
+  ,"recognize":true
   ,"parts":[
 	  {
 		"byte":1
@@ -550,14 +607,14 @@ Describes how to process each byte returned or sent in a Sysex Message.
 
 Field Name | Type | Description
 ---|:---:|---
+<a name="partsName"></a>name | `string` | **Required.** The name of this value that is being read or sent.
 <a name="partsByte"></a>byte | `integer` | **Required.** The byte count after the ExclusiveHeader and the Function Id starting from 0 that you wish to read
 <a name="partsLength"></a>length | `integer` | How many bytes to read. If not set it is assumed to only read 1 byte.
-<a name="partsName"></a>name | `string` | **Required.** The name of this value that is being read or sent.
 <a name="partsType"></a>type | `string` | The value MUST be one of `"string"`, `"number"`, `"integer"` or `"boolean"`. If not set integer is assumed.
+<a name="partsFormat"></a>format | `string` | this is the format of the data returned. i.e. `note`.
 <a name="partsRepeat"></a>repeat | `integer` | How many times are we going to read this byte and length. This is useful where the docmentation ask to read x amount of the same param
 <a name="partsRepeatTitles"></a>repeatTitles | [`string`] | The title of each repeat. The length of this array MUST match the repeat value.
 <a name="partsSuffix"></a>suffix | `string` | This helps for human readability when display the data. e.g. '%'
-
 <a name="partsExpr"></a>expr | `string` | The expression to determine the values from the data. [See more](#partExprExplanation) below.
 <a name="partsRevExpr"></a>revExpr | `string` | The expression to determine the data from the values. [See more](#partExprExplanation) below.
 <a name="partsMin"></a>min | `integer` | The minimum number that should be set. Min is checked before after expr and before revExpr.
@@ -609,7 +666,6 @@ Field Pattern | Type | Description
 }
 ```
 
-
 ##### Part Object Example - Repeat
 
 ```js
@@ -625,25 +681,88 @@ Field Pattern | Type | Description
 		"name": "Parameters",
 		"byte": 0,
 		"length":6,
-		"$ref": "#/sysexDefinitions/parameters"
+		"$ref": "#/sysex/definitions/parameters"
 		}
 		{
 		"byte": 6,
 		"length":8,
 		"name": "StepSequence Data ",
-		"$ref": "#/sysexDefinitions/stepSequence"
+		"$ref": "#/sysex/definitions/stepSequence"
 		}
 		,{
 		"byte": 14,
 		"length":114,
 		"name": "MotionSequence Data ",
-		"$ref": "#/sysexDefinitions/motionSequence"
+		"$ref": "#/sysex/definitions/motionSequence"
 		}
 	]
 	
 }
-````
+```
 
+#### <a name="sysexDefinitionsObject"></a>Sysex Definitions Object
+
+Used for refactoring Sysex data.
+
+##### Patterned Fields
+
+Field Pattern | Type | Description
+---|:---:|---
+<a name="sysexdefinition"></a>{definition} | [Parts Object](#partsObject) | **Required.** A string of the definition
+<a name="SysexFunctionExtensions"></a>^x- | Any | Allows extensions to the MIS Schema. The field name MUST begin with `x-`, for example, `x-internal-id`. The value can be `null`, a primitive, an array or an object. 
+
+##### Sysex Functions Object Example
+
+```js
+{
+    "motionSequence": [
+        {
+          "byte": 0,
+          "repeat": 64,
+          "name": "Step",
+          "type": "boolean",
+          "expr": "b(7)",
+          "revExpr": "b(7,1,val)"
+        },
+        {
+          "byte": 0,
+          "repeat": 64,
+          "name": "Step Value",
+          "type": "integer",
+          "expr": "b(6,6)",
+          "revExpr": "b(6,6,val)"
+        }
+    ]
+    
+}
+```
+
+#### <a name="schemaObject"></a>Schema Object
+
+The Schema Object allows the definition of [Part Object](#partObject) as a [JSON Reference](https://tools.ietf.org/html/draft-pbryan-zyp-json-ref-03)
+
+##### Fixed Fields
+Field Name | Type | Description
+---|:---:|---
+<a name="schemaRef"></a>$ref | `string` | As a [JSON Reference](https://tools.ietf.org/html/draft-pbryan-zyp-json-ref-03)
+
+##### Patterned Objects 
+
+Field Pattern | Type | Description
+---|:---:|---
+<a name="schemaExtensions"></a>^x- | Any | Allows extensions to the MIS Schema. The field name MUST begin with `x-`, for example, `x-internal-id`. The value can be `null`, a primitive, an array or an object. 
+
+
+##### Schema Object Examples
+
+```js
+{
+	"byte": 268,
+	"length": 6,
+	"name": "Part 1 Parameters ",
+	"$ref": "#/sysex/definitions/parameters"
+}
+```
 
 ##### <a name="partExprExplanation"></a>Parts Expression Explanation
 It is hoped that any MIS library or toolset is able to use the Expression set as defined to make the information in stored in Sysex not only readable but also have the ability to be manipulated and changed easily. With this in mind each part has the use of an `expr` and `revExpr` fields to read and modify data.
@@ -654,6 +773,7 @@ Expression are written in normal expression format with bitwise and basic math f
 * floor(x) << 7 & 256
 
 Added to this is a bit function `b()` that make it simpler to get/set specific bit ranges. The expression `b(5,2)` would grab bit 5 and 4 of the byte to get the current value. This could also be written as `(value & 48 )>> 4` or `(value >> 4) & 3`. 
+
 The first argument is the bit number to start with, the 2nd argument is the length (default to 1 if not present).
 The third argument will set the bits of the current byte(s) from the value provided.
 
@@ -713,33 +833,3 @@ The expressions parser MUST handle the following
 
 
 
-
-
-#### <a name="schemaObject"></a>Schema Object
-
-The Schema Object allows the definition of [Part Object](#partObject) as a [JSON Reference](https://tools.ietf.org/html/draft-pbryan-zyp-json-ref-03)
-
-##### Fixed Fields
-Field Name | Type | Description
----|:---:|---
-<a name="schemaRef"></a>$ref | `string` | As a [JSON Reference](https://tools.ietf.org/html/draft-pbryan-zyp-json-ref-03)
-
-##### Patterned Objects 
-
-Field Pattern | Type | Description
----|:---:|---
-<a name="schemaExtensions"></a>^x- | Any | Allows extensions to the MIS Schema. The field name MUST begin with `x-`, for example, `x-internal-id`. The value can be `null`, a primitive, an array or an object. 
-
-
-##### Schema Object Examples
-
-
-
-```js
-{
-	"byte": 268,
-	"length": 6,
-	"name": "Part 1 Parameters ",
-	"$ref": "#/sysex/definitions/parameters"
-}
-```
