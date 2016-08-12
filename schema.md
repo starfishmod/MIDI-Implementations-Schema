@@ -553,22 +553,97 @@ Field Name | Type | Description
 <a name="partsByte"></a>byte | `integer` | **Required.** The byte count after the ExclusiveHeader and the Function Id starting from 0 that you wish to read
 <a name="partsLength"></a>length | `integer` | How many bytes to read. If not set it is assumed to only read 1 byte.
 <a name="partsName"></a>name | `string` | **Required.** The name of this value that is being read or sent.
-<a name="partsType"></a>type | `string` | The value MUST be one of `"string"`, `"number"`, `"integer"`, `"boolean"` or `"array"`. If not set integer is assumed.
-<a name="partsSuffix"></a>suffix | `string` | This helps for human readability when display the data.
-<a name="partsItems"></a>items | [Parts Object](#partsObject) | This is required if the type is set to array.
+<a name="partsType"></a>type | `string` | The value MUST be one of `"string"`, `"number"`, `"integer"` or `"boolean"`. If not set integer is assumed.
+<a name="partsRepeat"></a>repeat | `integer` | How many times are we going to read this byte and length. This is useful where the docmentation ask to read x amount of the same param
+<a name="partsRepeatTitles"></a>repeatTitles | [`string`] | The title of each repeat. The length of this array MUST match the repeat value.
+<a name="partsSuffix"></a>suffix | `string` | This helps for human readability when display the data. e.g. '%'
+
 <a name="partsExpr"></a>expr | `string` | The expression to determine the values from the data. [See more](#partExprExplanation) below.
 <a name="partsRevExpr"></a>revExpr | `string` | The expression to determine the data from the values. [See more](#partExprExplanation) below.
 <a name="partsMin"></a>min | `integer` | The minimum number that should be set. Min is checked before after expr and before revExpr.
 <a name="partsMax"></a>max | `integer` | The maximum number that should be set. Max is checked before after expr and before revExpr.
 <a name="partsMap"></a>map | [`string`] | Map the value to this array of Strings to make it more human friendly.
 <a name="partsSchema"></a>schema | [Schema Object](#schemaObject) | The schema defining the type used for the parts parameter. Only use with name, byte and length.
-
+<a name="partsParts"></a>parts | [Parts Object](#partsObject) | Break down the value grabbed by the byte and length into easier components. This is usefult if you are also repeating blocks of data. Only use with name, byte, length, repeat and repeatTitles.
 
 ##### Parts Objects 
 
 Field Pattern | Type | Description
 ---|:---:|---
 <a name="operationExtensions"></a>^x- | Any | Allows extensions to the MIS Schema. The field name MUST begin with `x-`, for example, `x-internal-id`. The value can be `null`, a primitive, an array or an object. 
+
+##### Part Object Example
+
+```js
+{
+	"byte":2,
+	"name": "Pattern Length",
+	"type": "integer",
+	"expr":"b(1,2) + 1",
+	"revExpr":"b(1,2,val-1)",
+	"max": 4,
+	"min": 1
+}
+```
+
+##### Part Object Example - Mapping
+
+```js
+{
+	"byte":4,
+	"name": "Effect Type",
+	"type": "integer",
+	"max": 10,
+	"map": [
+		"Flanger/Chorus",
+		"Phaser",
+		"Ring Modulation",
+		"Pitch Shifter",
+		"Compressor",
+		"Distortion",
+		"Decimator",
+		"Isolator",
+		"Resonance Filter",
+		"Wah"
+	]
+}
+```
+
+
+##### Part Object Example - Repeat
+
+```js
+{
+	"byte":268,
+	"length":128,
+	"repeat":10,
+	"Name": "Parts",
+	"repeatTitles":["Part 1","Part 2","Part 3","Part 4","Part 5","Part 6A","Part 6B","Part 7A","Part 7B","Slice"],
+	
+	"parts":[
+		{
+		"name": "Parameters",
+		"byte": 0,
+		"length":6,
+		"$ref": "#/sysexDefinitions/parameters"
+		}
+		{
+		"byte": 6,
+		"length":8,
+		"name": "StepSequence Data ",
+		"$ref": "#/sysexDefinitions/stepSequence"
+		}
+		,{
+		"byte": 14,
+		"length":114,
+		"name": "MotionSequence Data ",
+		"$ref": "#/sysexDefinitions/motionSequence"
+		}
+	]
+	
+}
+````
+
 
 ##### <a name="partExprExplanation"></a>Parts Expression Explanation
 It is hoped that any MIS library or toolset is able to use the Expression set as defined to make the information in stored in Sysex not only readable but also have the ability to be manipulated and changed easily. With this in mind each part has the use of an `expr` and `revExpr` fields to read and modify data.
