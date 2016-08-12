@@ -534,8 +534,9 @@ Field Pattern | Type | Description
   "exclusiveHeader": "F0 42 3C 57",
   "functions": {
         "10":{
-          "name": "CURRENT PATTERN DATA DUMP REQUEST"
-          ,"recognize":true
+          "name": "CURRENT PATTERN DATA DUMP REQUEST",
+          "transmit":false,
+          "recognize":true
         }
    }
   
@@ -558,8 +559,9 @@ Field Pattern | Type | Description
 ```js
 {
 	"10":{
-	  "name": "CURRENT PATTERN DATA DUMP REQUEST"
-	  ,"recognize":true
+	  "name": "CURRENT PATTERN DATA DUMP REQUEST",
+	  "transmit":false,
+	  "recognize":true
 	}
 }
 ```
@@ -587,13 +589,14 @@ Field Pattern | Type | Description
 
 ```js
 {
-  "name": "PATTERN WRITE REQUEST"
-  ,"recognize":true
-  ,"parts":[
+  "name": "PATTERN WRITE REQUEST",
+  "transmit":false,
+  "recognize":true,
+  "parts":[
 	  {
-		"byte":1
-		,"name":"Destination Program Number"
-		,"max":127
+		"byte":1,
+		"name":"Destination Program Number",
+		"max":127
 	  }
 	]
 }
