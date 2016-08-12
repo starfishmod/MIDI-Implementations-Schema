@@ -201,7 +201,9 @@
             "enum": [
               "GM",
               "GM2",
-              "GMLite"
+              "GMLite",
+              "GS",
+              "XG"
             ]
           },
           "uniqueItems": true
