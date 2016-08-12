@@ -675,25 +675,30 @@ Field Pattern | Type | Description
 	"repeat":10,
 	"Name": "Parts",
 	"repeatTitles":["Part 1","Part 2","Part 3","Part 4","Part 5","Part 6A","Part 6B","Part 7A","Part 7B","Slice"],
-	
 	"parts":[
 		{
-		"name": "Parameters",
-		"byte": 0,
-		"length":6,
-		"$ref": "#/sysex/definitions/parameters"
-		}
+			"name": "Parameters",
+			"byte": 0,
+			"length":6,
+			"schema": {
+				"$ref": "#/sysexDefinitions/parameters"
+			}
+		},
 		{
-		"byte": 6,
-		"length":8,
-		"name": "StepSequence Data ",
-		"$ref": "#/sysex/definitions/stepSequence"
-		}
-		,{
-		"byte": 14,
-		"length":114,
-		"name": "MotionSequence Data ",
-		"$ref": "#/sysex/definitions/motionSequence"
+			"byte": 6,
+			"length": 8,
+			"name": "StepSequence Data ",
+			"schema": {
+				"$ref": "#/sysexDefinitions/stepSequence"
+			}
+		},
+		{
+			"byte": 14,
+			"length": 114,
+			"name": "MotionSequence Data ",
+			"schema": {
+				"$ref": "#/sysexDefinitions/motionSequence"
+			}
 		}
 	]
 	
