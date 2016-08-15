@@ -1,0 +1,217 @@
+{
+  "MIS": "0.9",
+  "info": {
+    "manufacturer": {
+      "name": "Yamaha",
+      "id": "43"
+    },
+    "model": {
+      "name": "XG"
+    },
+    "date": "1999-01-01",
+    "deviceVersions": [
+      "1.26"
+    ],
+    "documentVersion": "0.1",
+    "author": "Andrew Mee <primary.edw@gmail.com>"
+  },
+  "chart": {
+    "bankSelect": {
+      "transmit": true,
+      "recognize": true
+    },
+    "pitchBend": {
+      "transmit": false,
+      "recognize": true
+    },
+    "keyAftertouch": {
+      "transmit": true,
+      "recognize": true
+    }
+  },
+  "controllers": {
+    "RPN00":{
+      "transmit": true,
+      "recognize": true
+    },
+    "RPN01":{
+      "transmit": true,
+      "recognize": true
+    },
+    "RPN02":{
+      "transmit": true,
+      "recognize": true
+    },
+    "CC": {
+      "1": {
+        "transmit": true,
+        "recognize": true
+      },
+      "5": {
+        "transmit": true,
+        "recognize": true
+      },
+      "7": {
+         "transmit": true,
+         "recognize": true,
+         "default":100
+      },
+      "10": {
+        "transmit": true,
+        "recognize": true,
+        "type":"balance",
+        "default":64
+      },
+      "11": {
+        "transmit": true,
+        "recognize": true,
+        "default":127
+      },
+      "64": {
+        "transmit": true,
+        "recognize": true,
+        "type":"switch",
+        "remarks":"0 to 127 (0-63:Off 64-127:On)"
+      },
+      "65": {
+        "transmit": true,
+        "recognize": true,
+        "type":"switch",
+        "remarks":"0 to 127 (0-63:Off 64-127:On)"
+      },
+      "66": {
+        "transmit": true,
+        "recognize": true,
+        "type":"switch",
+        "remarks":"0 to 127 (0-63:Off 64-127:On)"
+      },
+      "67": {
+        "transmit": true,
+        "recognize": true,
+        "type":"switch",
+        "remarks":"0 to 127 (0-63:Off 64-127:On)"
+      },
+      "71": {
+        "transmit": true,
+        "recognize": true,
+        "type":"balance",
+        "remarks":"0 to 127 (0:-64 64:+0 127:+63)"
+      },
+      "72": {
+        "transmit": true,
+        "recognize": true,
+        "type":"balance",
+        "remarks":"0 to 127 (0:-64 64:+0 127:+63)"
+      },
+      "73": {
+        "transmit": true,
+        "recognize": true,
+        "type":"balance",
+        "remarks":"0 to 127 (0:-64 64:+0 127:+63)"
+      },
+      "74": {
+        "transmit": true,
+        "recognize": true,
+        "type":"balance",
+        "remarks":"0 to 127 (0:-64 64:+0 127:+63)"
+      },
+      "84": {
+        "transmit": true,
+        "recognize": true
+      },
+      "91": {
+        "transmit": true,
+        "recognize": true,
+        "default":40
+      },
+      "93": {
+        "transmit": true,
+        "recognize": true
+      },
+      "94": {
+        "transmit": true,
+        "recognize": true
+      }
+    },
+    "NRPN": {
+      "01 08": {
+        "name": "Vibrato Rate",
+        "transmit": true,
+        "recognize": true,
+        "type":"balance",
+        "MSBOnly": true
+      },
+      "01 09": {
+        "name": "Vibrato Depth",
+        "transmit": true,
+        "recognize": true,
+        "type":"balance",
+        "MSBOnly": true
+      },
+      "01 0A": {
+        "name": "Vibrato Delay",
+        "transmit": true,
+        "recognize": true,
+        "type":"balance",
+        "MSBOnly": true
+      },
+      "01 20": {
+        "name": "Filter Cutoff Frequency",
+        "transmit": true,
+        "recognize": true,
+        "type":"balance",
+        "MSBOnly": true
+      },
+      "01 21": {
+        "name": "Filter Resonance",
+        "transmit": true,
+        "recognize": true,
+        "type":"balance",
+        "MSBOnly": true
+      },
+      "01 63": {
+        "name": "EG Attack Time",
+        "transmit": true,
+        "recognize": true,
+        "type":"balance",
+        "MSBOnly": true
+      },
+      "01 64": {
+        "name": "EG Decay Time",
+        "transmit": true,
+        "recognize": true,
+        "type":"balance",
+        "MSBOnly": true
+      },
+      "01 65": {
+        "name": "EG Release",
+        "transmit": true,
+        "recognize": true,
+        "type":"balance",
+        "MSBOnly": true
+      }
+      
+    }
+  },
+  "sysex": {
+    "masterVolume": {
+      "transmit": false,
+      "recognize": true
+    },
+    "exclusiveHeader": "F0 43 <DD> 4C",
+    "functions": {
+      "00": {
+        "name": "XG System On",
+        "transmit": false,
+        "recognize": true,
+        "parts":[
+            {
+                "bytes":0,
+                "length":4,
+                "value":32256
+            }    
+        ]
+      }
+    }
+  }
+}
