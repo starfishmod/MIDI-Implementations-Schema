@@ -66,9 +66,9 @@ By convention, the MIS specification file is named based on the manufacter and m
 
 Primitive data types in the MIS Specification are based on the types supported by the [JSON-Schema Draft 4](http://json-schema.org/latest/json-schema-core.html#anchor8). Models are described using the [Schema Object](#schemaObject) which is a subset of JSON Schema Draft 4.
 
-<a name="hexAndDec"></a>Hexidecimal and integers are sometimes used interchangably. However numbers in Hexidecimal should be a string as JSON does not support hex. So the number 66 is represented as `"42"`. This should always be in a 2 byte string so 0 is `00`. This keeps it similar to most Sysex documentation conventions. Some items are required to be in hex and other in integers and are clarified as such. For example CC numbers are an integer between 0-127 while the NRPN MSB/LSB are in hex. 
+<a name="hexAndDec"></a>Hexidecimal values are often used in written documentation, however as the current JSON standard does not support hexidecimal values these will need to be converted to integers. So the hex number 0x42 (or 42H) will need to be converted to 66.
 
-While this makes it clear for any humans to distinguish between the two - but does put extra burden on the computer to do the same.
+While this makes it can be unclear for humans to distinguish between the two it will make it easier for the computer to parse. It also expected that the tools used will allow humans to enter and display in either format.
 
 ### Schema
 
@@ -611,14 +611,15 @@ Describes how to process each byte returned or sent in a Sysex Message.
 Field Name | Type | Description
 ---|:---:|---
 <a name="partsName"></a>name | `string` | **Required.** The name of this value that is being read or sent.
-<a name="partsByte"></a>byte | `integer` | **Required.** The byte count after the ExclusiveHeader and the Function Id starting from 0 that you wish to read
-<a name="partsLength"></a>length | `integer` | How many bytes to read. If not set it is assumed to only read 1 byte.
+<a name="partsByte"></a>byte | `integer` | **Required.** The byte count after the ExclusiveHeader and the Function Id starting from 0 that you wish to read. A byte can have a decimal value from 0-7 representing the bit you want to start reading from. [See more](#byteLengthExplanation) below.
+<a name="partsLength"></a>length | `integer` | How many bytes to read. If not set it is assumed to only read 1 byte. A length can have a decimal value from 0-7 representing the bits relevant. [See more](#byteLengthExplanation) below.
 <a name="partsType"></a>type | `string` | The value MUST be one of `"string"`, `"number"`, `"integer"` or `"boolean"`. If not set integer is assumed.
 <a name="partsFormat"></a>format | `string` | this is the format of the data returned. i.e. `note`.
 <a name="partsRepeat"></a>repeat | `integer` | How many times are we going to read this byte and length. This is useful where the docmentation ask to read x amount of the same param
 <a name="partsRepeatTitles"></a>repeatTitles | [`string`] | The title of each repeat. The length of this array MUST match the repeat value.
 <a name="partsSuffix"></a>suffix | `string` | This helps for human readability when display the data. e.g. '%'
-<a name="partsExpr"></a>expr | `string` | The expression to determine the values from the data. [See more](#partExprExplanation) below.
+<a name="partsaddValue"></a>expr | `string` | This will adjust the vale for visual display. This MUST not be used with expressions.
+<a name="partsExpr"></a>expr | `string` | The expression to determine the values from the data. This MUST not be used with addValue. An expression MUST have a revExpr [See more](#partExprExplanation) below.
 <a name="partsRevExpr"></a>revExpr | `string` | The expression to determine the data from the values. [See more](#partExprExplanation) below.
 <a name="partsMin"></a>min | `integer` | The minimum number that should be set. Min is checked before after expr and before revExpr.
 <a name="partsMax"></a>max | `integer` | The maximum number that should be set. Max is checked before after expr and before revExpr.
@@ -636,11 +637,11 @@ Field Pattern | Type | Description
 
 ```js
 {
-	"byte":2,
+	"byte":2.1,
+	"length":0.2,
 	"name": "Pattern Length",
 	"type": "integer",
-	"expr":"b(1,2) + 1",
-	"revExpr":"b(1,2,val-1)",
+	"addValue": 1,
 	"max": 4,
 	"min": 1
 }
@@ -725,20 +726,18 @@ Field Pattern | Type | Description
 {
     "motionSequence": [
         {
-          "byte": 0,
+          "byte": 0.7,
+          "length":0.1,
           "repeat": 64,
           "name": "Step",
-          "type": "boolean",
-          "expr": "b(7)",
-          "revExpr": "b(7,1,val)"
+          "type": "boolean"
         },
         {
-          "byte": 0,
+          "byte": 0.6,
+          "length":0.6,
           "repeat": 64,
           "name": "Step Value",
-          "type": "integer",
-          "expr": "b(6,6)",
-          "revExpr": "b(6,6,val)"
+          "type": "integer"
         }
     ]
     
@@ -774,28 +773,18 @@ Field Pattern | Type | Description
 }
 ```
 
-##### <a name="partExprExplanation"></a>Parts Expression Explanation
-It is hoped that any MIS library or toolset is able to use the Expression set as defined to make the information in stored in Sysex not only readable but also have the ability to be manipulated and changed easily. With this in mind each part has the use of an `expr` and `revExpr` fields to read and modify data.
+##### <a name="byteLengthExplanation"></a>Byte Length Explanation
+In an effort to make reading and writing bit data into bytes without effecting other bits the MIS schema defines a way to reach indivdual bits and the lengths needed.
+Bytes and Lengths can have a decimal point value up to 7 which reads the bits 0-7 of a given byte
 
-Expression are written in normal expression format with bitwise and basic math function:
-* 5 + 4
-* (5 + x) *2
-* floor(x) << 7 & 256
-
-Added to this is a bit function `b()` that make it simpler to get/set specific bit ranges. The expression `b(5,2)` would grab bit 5 and 4 of the byte to get the current value. This could also be written as `(value & 48 )>> 4` or `(value >> 4) & 3`. 
-
-The first argument is the bit number to start with, the 2nd argument is the length (default to 1 if not present).
-The third argument will set the bits of the current byte(s) from the value provided.
-
-A common example is series of on/off switches such as
+A common example is series of on/off switches such as - although this would be handled by Byte Length bit parameters normally.
 
 ```js
 {
-  "byte":10,
+  "byte":10.1,
+  "length":0.1,
   "name": "Delay BPM Sync Stat",
-  "type": "boolean",
-  "expr":"b(1)",
-  "revExpr":"b(1,1,val)"
+  "type": "boolean"
 }
 ```
 
@@ -805,7 +794,39 @@ Bit | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0
 ---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|---
  | 0 | 1 | 1 | 1 | 1 | 1 | 0 | 1
  
-We see that bit 1 is set to 0 (off). So getting `b(1)` we get a 0 which equates to boolan false.
+We see that bit 1 is set to 0 (off). So starting from bit 1 (from the point value on the byte variable) and getting the single bit as determined by the length of 0.1 we get the value of zero. It would also be easy to change the value as we know the value is only 1 bit in length and it is placed into bit 1.
+
+
+
+##### <a name="partExprExplanation"></a>Parts Expression Explanation
+It is hoped that any MIS library or toolset is able to use the Expression set as defined to make the information in stored in Sysex not only readable but also have the ability to be manipulated and changed easily. With this in mind each part has the use of an `expr` and `revExpr` fields to read and modify data.
+
+Note that `$` represents the value of the expression, and `@` represent the current value in the byte(s) returned.
+
+Expression are written in normal expression format with bitwise and basic math function:
+* 5 + 4
+* (5 + @) *2
+* floor($) << 7 & 0b1111
+
+A common example is series of on/off switches such as - although this would be handled by Byte Length bit parameters normally.
+
+```js
+{
+  "byte":10,
+  "name": "Delay BPM Sync Stat",
+  "type": "boolean",
+  "expr":"(0b10 & @) >> 1",
+  "revExpr":"(@ & 0b1111101 | ($ <<1))"
+}
+```
+
+In this example we may recieve byte 10 and it looks like `01111101`. if we break this up into a table:
+
+Bit | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 
+---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|---
+ | 0 | 1 | 1 | 1 | 1 | 1 | 0 | 1
+ 
+We see that bit 1 is set to 0 (off). So getting `b(1)` we get a 0 which equates to boolean false.
  
 A more complex Example is:
 ```js
@@ -813,32 +834,35 @@ A more complex Example is:
   "byte": 0,
   "length":2,
   "name": "Tempo",
-  "format": "float",
-  "expr":"b(14,9) + b(3,4)/10",
-  "revExpr":"b(14,9,floor(val)),b(3,4,(val%1)*10)"
+  "type": "float",
+  "expr":"(@ >> 5) + (@ & 0b1111)/10",
+  "revExpr":"floor($) << 5 + ($ * 10  % 10 )"
 }
 ```
 
 In this example we read 2 bytes from byte 0. Which looks like:
 
-Bit | 15 | 14 | 13 | 12 | 11 | 10 | 9 | 8 | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 
+Bit  | * | 13 | 12 | 11 | 10 | 9 | 8 | 7 | * | 6 | 5 | 4 | 3 | 2 | 1 | 0 
 ---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|---
  | 0 | 0 | 0 | 1 | 1 | 1 | 1 | 1 | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 1 
  
+Note that in sysex the bit 7 is always 0. So returning 2 bytes actually gives us a 14bit value not a 16bit value.
+ 
 The documentation states that the Tempo is built using iiiiiiiii00ffff where iiiiiiiii is the Tempo between 20 and 300 and ffff is a decimal place betwen 0 and 9.
-in the expr we  have a start bit (14), followed by an end bit(6) we get this using `b(14,9)`. We then get bits 3 to 0 (`b(3,4)`) and divide by 10.
-If we start with the first bit pair (14,6) we get 001111100 which converts to "124". We get then add the next bit pair (3,0) and get "5" and divide by 10 getting 0.5. Together this gives us a Tempo of "124.5".
+The expr uses standard bitwise operators to convert the value into 124.5.
 
-The revExpr tells s how to turn this information back. If we had a tempo of 132.2 it gets the floor of val of 132 and then puts that into bits 14 to 6. It then gets the 0.2 turns it into 2 puts that into bits 3 to 0.
+The revExpr tells s how to turn this information back. If we had a tempo of 132.2 it gets the floor of val of 132 and then puts that into bits 13 to 7. It then gets the 0.2 turns it into 2 puts that into bits 3 to 0.
+
+It will then be up to the application to split this 14bit value into 2 8bit values.
 
 The expressions parser MUST handle the following
-* keywords:
- * val - revExpr only : The value to use to turn into the byte data
 * functions:
  * floor
  * ceil
- * b : As described above
 * operands - please follow the order of operations guidelines at https://en.wikipedia.org/wiki/Order_of_operations#Programming_language
+* variables - 
+ * $ - the value to be put into the byte(s). Only used in revExpr
+ * @ - the value currently in the byte(s)
 
 
 
