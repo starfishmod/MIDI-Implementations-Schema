@@ -436,14 +436,14 @@ A list of the MIDI NRPN parameters available.
 
 Field Pattern | Type | Description
 ---|:---:|---
-<a name="nrpnList"></a>{MSB} {LSB} | [NRPN Item Object](#nrpnItemObject) | **Required.** This is the Hex of the NRPN MSB and LSB values.
+<a name="nrpnList"></a>{MSB} {LSB} | [NRPN Item Object](#nrpnItemObject) | **Required.** This is the integer of the NRPN MSB and LSB values.
 <a name="nrpnExtensions"></a>^x- | Any | Allows extensions to the MIS Schema. The field name MUST begin with `x-`, for example, `x-internal-id`. The value can be `null`, a primitive, an array or an object. 
 
 ##### NRPN Object Example:
 
 ```js
 {
-	"05 07":{
+	"5 7":{
 		"name":"Part 1 Motion Seq Type"
 		,"transmit":true
 		,"recognize":true
