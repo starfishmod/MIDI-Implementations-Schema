@@ -1,7 +1,7 @@
 # MIDI Implementations Schema
 
 
-#### Version 0.9
+#### Version 0.9.1
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in [RFC 2119](http://www.ietf.org/rfc/rfc2119.txt).
 
@@ -20,6 +20,7 @@ This schema attempts to follow the MIDI Implementation Chart V 2.0 (MMA/AMEI RP-
 Version | Date | Notes
 --- | --- | ---
 0.9 | 2016-08-02 | First release of the MIS Specification for comment and review
+0.9.1 | 2016-08-31 | Tweaking to handle sysex and voice lists
 
 ## Definitions
 
@@ -33,7 +34,7 @@ The specification as defined by the [MIDI Association](https://www.midi.org/)
 Used to send changes on a specific channel. Examples include pan, volume.
 
 ##### <a name="nrpn"></a>NRPN 
-Non-Registered Parameter Number. More often than not manufactuers use [NRPN](https://en.wikipedia.org/wiki/NRPN) to send data to and from synthesizers. NRPN usually require between 3 and 4  -  3 byte MIDI messages.
+Non-Registered Parameter Number. Often manufactuers use [NRPN](https://en.wikipedia.org/wiki/NRPN) to send data to and from synthesizers. NRPN usually require between 3 and 4  -  3 byte MIDI messages.
 
 ##### <a name="deviceEnquiry"></a>Device Enquiry 
 A Universal Sysex message that may return information about the device.
@@ -58,7 +59,7 @@ The schema exposes two types of fields. Fixed fields, which have a declared name
 
 ### File Structure
 
-The MIS representation of the implementation is made of a single file. 
+The MIS representation of the implementation is made of a single file. Except where the [Chart GM](#chartGM) is set. It is suggested to then pull in that GM spec file if available and merge the banks, controllers and sysex parameters.
 
 By convention, the MIS specification file is named based on the manufacter and model number e.g. `Korg_ES1.json`.
 
@@ -80,9 +81,10 @@ This is the root document object for the implementation specification.
 
 Field Name | Type | Description
 ---|:---:|---
-<a name="misMis"></a>MIS | `string` | **Required.** Specifies the MIS Specification version being used. The value MUST be `"0.9"`.
+<a name="misMis"></a>MIS | `string` | **Required.** Specifies the MIS Specification version being used. The value MUST be `"0.9.1"`.
 <a name="misInfo"></a>info | [Info Object](#infoObject) | **Required.** Provides metadata about the implementation. The metadata can be used by the software if needed.
 <a name="misChart"></a>chart | [Chart Object](#chartObject) | **Required.** This provides the basic implementation information.
+<a name="misbanks"></a>banks | [Bank Object](#bankObject) | The lists the bank and voice lists for the device.
 <a name="misControllers"></a>controllers | [Controllers Object](#controllersObject) | This provides the information to transmit or receive Controller information via [CC](#cc), RPN or [NRPN](#nrpn).
 <a name="misSysex"></a>sysex | [Sysex Object](#sysexObject) | This provides the information to transmit or receive [Sysex](#sysex) Information.
 
@@ -180,8 +182,8 @@ Field Name | Type | Description
 ---|:---:|---
 <a name="chartMidiChannels"></a>midiChannels | [recognizeTransmit Object](#recognizeTransmitObject) |  Default range 1-16. The range of MIDI channels that the device transmits, exports, responds to, and/or imports. Devices using extended channel systems via multiple cables or input/output ports should list the total number of channels in the appropriate “transmit” or “Recognized” ranges and should use the “name” field in the rangeto indicate the terminology used by the device to identify the extra channels (i.e., “MIDIA, MIDIB”)
 <a name="chartNoteNumbers"></a>noteNumbers | [recognizeTransmit Object](#recognizeTransmitObject) | Default range 0-127. The total range of transmitted or recognized notes. 
-<a name="chartProgramChange"></a>programChange | [recognizeTransmit Object](#recognizeTransmitObject) | Default range 0-127. Indicate the range of Program Change numbers which are transmitted and/or recognized. If not implemented, enter a “No” in the appropriate column.
-<a name="chartBankSelect"></a>bankSelect | [recognizeTransmit Object](#recognizeTransmitObject) | Use a “Yes” or “No” to indicate whether or not the device correctly responds to Bank Select messages as per the MIDI 1.0 Specification. Devices that respond only to Bank Select MSB (cc #0) but not to the LSB (cc #32) should place a "No" in the “Recognized” column and should indicate this in the “Remarks” column. If the device does correctly respond to Bank Select messages, use the “Remarks” column to indicate what banks or ranges of banks are available in the device. If certain banks are accessible only by MIDI (and not by front panel user control), these should be listed in the “Remarks” column.
+<a name="chartProgramChange"></a>programChange | [recognizeTransmit Object](#recognizeTransmitObject) | Default range 0-127. Indicate the range of Program Change numbers which are transmitted and/or recognized.
+<a name="chartBankSelect"></a>bankSelect | [recognizeTransmit Object](#recognizeTransmitObject) | Indicate whether or not the device correctly responds to Bank Select messages as per the MIDI 1.0 Specification. Devices that respond only to Bank Select MSB (cc #0) but not to the LSB (cc #32) should place a "false" in the “Recognized” column and should indicate this in the “Remarks” column. If the device does correctly respond to Bank Select messages, use the “Remarks” column to indicate what banks or ranges of banks are available in the device. If certain banks are accessible only by MIDI (and not by front panel user control), these should be listed in the “Remarks” column.
 <a name="chartMode1"></a>mode1 | [recognizeTransmit Object](#recognizeTransmitObject) | Mode 1: Omni-On, Poly (Yes/No)
 <a name="chartMode2"></a>mode2 | [recognizeTransmit Object](#recognizeTransmitObject) | Mode 2: Omni-On, Mono (Yes/No)
 <a name="chartMode3"></a>mode3 | [recognizeTransmit Object](#recognizeTransmitObject) | Mode 3: Omni-Off, Poly (Yes/No) 
@@ -351,6 +353,112 @@ Field Pattern | Type | Description
 ```
 
 
+
+#### <a name="BanksObject"></a>Banks Object
+
+Object for describing program changes and voicelists.
+
+##### Fixed Fields
+
+Field Name | Type | Description
+---|:---:|---
+<a name="bankProgramChange"></a>PC | [[numberList Object](#pcListObject)] | A description of each program
+<a name="bankVoiceBanks"></a>voiceBanks | [[voiceBanks Object](#voiceBanksObject)] | A description of each voice bank
+
+##### Patterned Objects 
+
+Field Pattern | Type | Description
+---|:---:|---
+<a name="bankExtensions"></a>^x- | Any | Allows extensions to the MIS Schema. The field name MUST begin with `x-`, for example, `x-internal-id`. The value can be `null`, a primitive, an array or an object. 
+
+##### Banks Object Example:
+
+```js
+{
+	"PC":{
+		"0":"A01"
+		,"1":"A02"
+		/*...*/
+		,"127":"B64"
+	},
+	"voiceBanks":{
+		"0":{
+			"name":"GM",
+			"voices":{
+				"1":"Acoustic Grand Piano"
+				/*...*/
+			}
+		},
+		"127":{
+			"name":"Drums",
+			"drummaps":{
+				"1":{
+					"name":"GM Drums",
+					"voices":{
+						"13":"Kick"
+						/*...*/
+					}
+				}
+			}
+		}
+	
+	}
+}
+```
+
+#### <a name="numberListObject"></a>Number List Object
+
+A list of numbers from 0-127 and a string value
+
+
+##### Patterned Objects 
+
+Field Pattern | Type | Description
+---|:---:|---
+<a name="numberList"></a>{num} | `string` | **Required.** A number between 0-127 and the name of the object as a string
+<a name="numberExtensions"></a>^x- | Any | Allows extensions to the MIS Schema. The field name MUST begin with `x-`, for example, `x-internal-id`. The value can be `null`, a primitive, an array or an object. 
+
+
+
+#### <a name="voiceBanksObject"></a>Voice Banks Object
+
+For each bank list the voices. This refers to using Bank Select MSB (cc #0) when using it from voice banks and the LSB (cc #32) when used in a drum map.
+
+
+##### Patterned Objects 
+
+Field Pattern | Type | Description
+---|:---:|---
+<a name="voiceList"></a>{MSB0} | [voiceList Object](#voiceListObject) | **Required.** A number between 0-127 using Bank Select MSB (cc #0)
+<a name="voiceBankExtensions"></a>^x- | Any | Allows extensions to the MIS Schema. The field name MUST begin with `x-`, for example, `x-internal-id`. The value can be `null`, a primitive, an array or an object. 
+
+
+
+
+#### <a name="voiceListObject"></a>voiceList Object
+
+Object for voicelists. A list will either have voices OR drummaps.
+
+##### Fixed Fields
+
+Field Name | Type | Description
+---|:---:|---
+<a name="voiceListName"></a>name | `string` | **Required.** A name for this bank
+<a name="voiceListVoices"></a>voices | [[numberList Object](#pcListObject)] | A description of each program the num represents LSB (cc #32)
+<a name="voiceListDrumMaps"></a>drummaps | [[voiceBank Object](#voiceBankObject)] | A description of each voice in the drum map.
+
+##### Patterned Objects 
+
+Field Pattern | Type | Description
+---|:---:|---
+<a name="bankExtensions"></a>^x- | Any | Allows extensions to the MIS Schema. The field name MUST begin with `x-`, for example, `x-internal-id`. The value can be `null`, a primitive, an array or an object. 
+
+
+
+
+
+
+
 #### <a name="controllersObject"></a>Controllers Object
 
 This describes the controllers available for the MIDI device.
@@ -386,7 +494,7 @@ Field Pattern | Type | Description
 	}
   }
   ,"NRPN":{
-	"05 07":{
+	"5/7":{
 		"name":"Part 1 Motion Seq Type"
 		,"transmit":true
 		,"recognize":true
@@ -436,14 +544,14 @@ A list of the MIDI NRPN parameters available.
 
 Field Pattern | Type | Description
 ---|:---:|---
-<a name="nrpnList"></a>{MSB} {LSB} | [NRPN Item Object](#nrpnItemObject) | **Required.** This is the integer of the NRPN MSB and LSB values.
+<a name="nrpnList"></a>{MSB}/{LSB} | [NRPN Item Object](#nrpnItemObject) | **Required.** This is the integer of the NRPN MSB and LSB values.
 <a name="nrpnExtensions"></a>^x- | Any | Allows extensions to the MIS Schema. The field name MUST begin with `x-`, for example, `x-internal-id`. The value can be `null`, a primitive, an array or an object. 
 
 ##### NRPN Object Example:
 
 ```js
 {
-	"5 7":{
+	"5/7":{
 		"name":"Part 1 Motion Seq Type"
 		,"transmit":true
 		,"recognize":true
@@ -511,7 +619,7 @@ Field Name | Type | Description
 <a name="sysexMidiTuning"></a>midiTuning | [recognizeTransmit Object](#recognizeTransmitObject) | If True then this device will respond to a MIDI Tuning Sysex.
 <a name="sysexMasterVolume"></a>masterVolume | [recognizeTransmit Object](#recognizeTransmitObject) | If True then this device will respond to a Master Volume Sysex.
 <a name="sysexMasterBalance"></a>masterBalance | [recognizeTransmit Object](#recognizeTransmitObject) | If True then this device will respond to a Master Balance Sysex.
-<a name="sysexExclusiveHeader"></a>exclusiveHeader | `string` | This is the header used on all Sysex queries. This will be an string of hex e.g. `"F0 42 3C 57"`.
+<a name="sysexExclusiveHeader"></a>exclusiveHeader | [`integer`] | This is the header used on all Sysex queries. This will be an array of integers so an exclusive hedader of `"F0 42 3C 57"` will be [240,66,60,87].
 <a name="sysexFunctionsList"></a>functions | [Sysex Functions List Object](#sysexFunctionsListObject) | This holds the device specific Sysex instruction set
 <a name="sysexDefinitions"></a>definitions | [Sysex Definitions Object](#sysexDefinitionsObject) | Used generally as way to refactor repeated use of sysex data structures.
 
@@ -531,7 +639,7 @@ Field Pattern | Type | Description
   "masterVolume": {
 	"recognize": true
   },
-  "exclusiveHeader": "F0 42 3C 57",
+  "exclusiveHeader": [240,66,60,87],
   "functions": {
         "10":{
           "name": "CURRENT PATTERN DATA DUMP REQUEST",
@@ -551,7 +659,7 @@ Holds the relative paths to the individual Sysex calls as given by the Function 
 
 Field Pattern | Type | Description
 ---|:---:|---
-<a name="functionIdSysexFunction"></a>{functionId} | [Sysex Function Item Object](#sysexFunctionItemObject) | **Required.** An indivdual function Id call. This should be a hex of the Function Id e.g. `4C`
+<a name="functionIdSysexFunction"></a>{functionId} | [Sysex Function Item Object](#sysexFunctionItemObject) | **Required.** An indivdual function Id call. This should be a integer of the Function id e.g `76` (which is `4C` in hex) 
 <a name="SysexFunctionExtensions"></a>^x- | Any | Allows extensions to the MIS Schema. The field name MUST begin with `x-`, for example, `x-internal-id`. The value can be `null`, a primitive, an array or an object. 
 
 ##### Sysex Functions Object Example
@@ -594,7 +702,6 @@ Field Pattern | Type | Description
   "recognize":true,
   "parts":[
 	  {
-		"byte":1,
 		"name":"Destination Program Number",
 		"max":127
 	  }
@@ -604,30 +711,37 @@ Field Pattern | Type | Description
 
 #### <a name="PartsObject"></a>Parts Object
 
-Describes how to process each byte returned or sent in a Sysex Message.
+Each part should be read sequentially after the header and the function id. Each part is assumed to be a length of one byte unless a length or length expression field is used. If reserved or empty parts of the sysex data are required place a partObject that is empty to represent 1 byte or a length field to represent a number of empty bytes.
+
+Note that because sysex data only uses lowest 7 bits (bits 6-0) of the byte (bit 7 is 0). When reading in 2 bytes it will read the value in as a 14bit value NOT a 16bit value. 3 bytes is a 21 bit value etc.
+
+Individual bits can also be read and set using the bitPart object.
 
 ##### Fixed Fields
 
 Field Name | Type | Description
 ---|:---:|---
-<a name="partsName"></a>name | `string` | **Required.** The name of this value that is being read or sent.
-<a name="partsByte"></a>byte | `integer` | **Required.** The byte count after the ExclusiveHeader and the Function Id starting from 0 that you wish to read. A byte can have a decimal value from 0-7 representing the bit you want to start reading from. [See more](#byteLengthExplanation) below.
-<a name="partsLength"></a>length | `integer` | How many bytes to read. If not set it is assumed to only read 1 byte. A length can have a decimal value from 0-7 representing the bits relevant. [See more](#byteLengthExplanation) below.
+<a name="partsName"></a>name | `string` | The name of this value that is being read or sent.
+<a name="partsLength"></a>length | `integer` | How many bytes to read. If not set it is assumed to only read 1 byte. 
+<a name="partsLengthExpr"></a>lengthExpr | `string` | How many bytes to read, but use an expression to deteremine the length. This is useful if one part of the sysex tells you the length of a sample for example.
+<a name="partsIfExpr"></a>ifExpr | `string` | Use an expression to determin if this should be read.
+<a name="partsSetVariable"></a>setVariable | `string` | Set the value read to a global variable that can be used in expressions.  Variables MUST match the regexp /[a-z][a-z0-9]*/i
 <a name="partsType"></a>type | `string` | The value MUST be one of `"string"`, `"number"`, `"integer"` or `"boolean"`. If not set integer is assumed.
 <a name="partsFormat"></a>format | `string` | this is the format of the data returned. i.e. `note`.
 <a name="partsRepeat"></a>repeat | `integer` | How many times are we going to read this byte and length. This is useful where the docmentation ask to read x amount of the same param
 <a name="partsRepeatTitles"></a>repeatTitles | [`string`] | The title of each repeat. The length of this array MUST match the repeat value.
 <a name="partsSuffix"></a>suffix | `string` | This helps for human readability when display the data. e.g. '%'
-<a name="partsaddValue"></a>expr | `string` | This will adjust the vale for visual display. This MUST not be used with expressions.
+<a name="partsoffset"></a>offset | `string` | This will adjust the vale for visual display. 
 <a name="partsExpr"></a>expr | `string` | The expression to determine the values from the data. This MUST not be used with addValue. An expression MUST have a revExpr [See more](#partExprExplanation) below.
 <a name="partsRevExpr"></a>revExpr | `string` | The expression to determine the data from the values. [See more](#partExprExplanation) below.
 <a name="partsMin"></a>min | `integer` | The minimum number that should be set. Min is checked before after expr and before revExpr.
 <a name="partsMax"></a>max | `integer` | The maximum number that should be set. Max is checked before after expr and before revExpr.
 <a name="partsMap"></a>map | [`string`] | Map the value to this array of Strings to make it more human friendly.
-<a name="partsSchema"></a>schema | [Schema Object](#schemaObject) | The schema defining the type used for the parts parameter. Only use with name, byte and length.
-<a name="partsParts"></a>parts | [Parts Object](#partsObject) | Break down the value grabbed by the byte and length into easier components. This is usefult if you are also repeating blocks of data. Only use with name, byte, length, repeat and repeatTitles.
+<a name="partsSchema"></a>schema | [Schema Object](#schemaObject) | The schema defining the type used for the parts parameter. Only use with name and length.
+<a name="partsParts"></a>parts | [Parts Object](#partsObject) | Break down the value grabbed by the byte and length into easier components. This is usefult if you are also repeating blocks of data. Only use with name, length, repeat and repeatTitles.
+<a name="partsBitParts"></a>bitParts | [bitParts Object](#bitpartsObject) | Break down the value into indiviual bit ranges.
 
-##### Parts Objects 
+##### Patterned Fields
 
 Field Pattern | Type | Description
 ---|:---:|---
@@ -637,13 +751,12 @@ Field Pattern | Type | Description
 
 ```js
 {
-	"byte":2.1,
-	"length":0.2,
-	"name": "Pattern Length",
+	"name": "Swing",
 	"type": "integer",
-	"addValue": 1,
-	"max": 4,
-	"min": 1
+	"suffix": "%",
+	"offset":50,
+	"max": 50,
+	"min": 75
 }
 ```
 
@@ -651,7 +764,6 @@ Field Pattern | Type | Description
 
 ```js
 {
-	"byte":4,
 	"name": "Effect Type",
 	"type": "integer",
 	"max": 10,
@@ -674,7 +786,6 @@ Field Pattern | Type | Description
 
 ```js
 {
-	"byte":268,
 	"length":128,
 	"repeat":10,
 	"Name": "Parts",
@@ -682,14 +793,12 @@ Field Pattern | Type | Description
 	"parts":[
 		{
 			"name": "Parameters",
-			"byte": 0,
 			"length":6,
 			"schema": {
 				"$ref": "#/sysex/definitions/parameters"
 			}
 		},
 		{
-			"byte": 6,
 			"length": 8,
 			"name": "StepSequence Data ",
 			"schema": {
@@ -697,7 +806,6 @@ Field Pattern | Type | Description
 			}
 		},
 		{
-			"byte": 14,
 			"length": 114,
 			"name": "MotionSequence Data ",
 			"schema": {
@@ -706,6 +814,77 @@ Field Pattern | Type | Description
 		}
 	]
 	
+}
+```
+
+
+#### <a name="bitPartsObject"></a>bitParts Object
+
+A bit part object allows use to access individual bits in the data. Often these will include on/off switches (boolean) or option data.
+
+##### Fixed Fields
+
+Field Name | Type | Description
+---|:---:|---
+<a name="bitPartsName"></a>name | `string` | The name of this value that is being read or sent.
+<a name="bitPartsBit"></a>bit | `integer` | **Required** Start reading bits from. 
+<a name="bitPartsLength"></a>length | `integer` | **Required** How many bits to read. 
+<a name="bitPartsIfExpr"></a>ifExpr | `string` | Use an expression to determin if this should be read.
+<a name="bitPartsSetVariable"></a>setVariable | `string` | Set the value read to a global variable that can be used in expressions. Variables MUST match the regexp /[a-z][a-z0-9]*/i
+<a name="bitPartsType"></a>type | `string` | The value MUST be one of `"string"`, `"number"`, `"integer"` or `"boolean"`. If not set integer is assumed.
+<a name="bitPartsFormat"></a>format | `string` | this is the format of the data returned. i.e. `note`.
+<a name="bitPartsRepeat"></a>repeat | `integer` | How many times are we going to read this byte and length. This is useful where the docmentation ask to read x amount of the same param
+<a name="bitPartsRepeatTitles"></a>repeatTitles | [`string`] | The title of each repeat. The length of this array MUST match the repeat value.
+<a name="bitPartsSuffix"></a>suffix | `string` | This helps for human readability when display the data. e.g. '%'
+<a name="bitPartsoffset"></a>offset | `string` | This will adjust the vale for visual display. 
+<a name="bitPartsExpr"></a>expr | `string` | The expression to determine the values from the data. This MUST not be used with addValue. An expression MUST have a revExpr [See more](#partExprExplanation) below.
+<a name="bitPartsRevExpr"></a>revExpr | `string` | The expression to determine the data from the values. [See more](#partExprExplanation) below.
+<a name="bitPartsMin"></a>min | `integer` | The minimum number that should be set. Min is checked before after expr and before revExpr.
+<a name="bitPartsMax"></a>max | `integer` | The maximum number that should be set. Max is checked before after expr and before revExpr.
+<a name="bitPartsMap"></a>map | [`string`] | Map the value to this array of Strings to make it more human friendly.
+
+##### Patterned Fields 
+
+Field Pattern | Type | Description
+---|:---:|---
+<a name="operationExtensions"></a>^x- | Any | Allows extensions to the MIS Schema. The field name MUST begin with `x-`, for example, `x-internal-id`. The value can be `null`, a primitive, an array or an object. 
+
+##### bitPart Object Example
+
+```js
+{
+	"bitParts":[
+		{
+			"bit": 6,
+			"length":2,
+			"name": "Roll Type",
+			"type": "integer",
+			"offset": 1,
+			"max": 3,
+			"min": 1
+		  },
+		  {
+			"bit": 4,
+			"length":2,
+			"name": "Scale/Beat",
+			"type": "integer",
+			"map": [
+			  "16th",
+			  "32nd",
+			  "tri",
+			  "tr2"
+			]
+		  },
+		  {
+			"bit": 1,
+			"length":2,
+			"name": "Pattern Length",
+			"type": "integer",
+			"offset":1,
+			"max": 4,
+			"min": 1
+		  }
+	]
 }
 ```
 
@@ -726,15 +905,11 @@ Field Pattern | Type | Description
 {
     "motionSequence": [
         {
-          "byte": 0.7,
-          "length":0.1,
           "repeat": 64,
           "name": "Step",
           "type": "boolean"
         },
         {
-          "byte": 0.6,
-          "length":0.6,
           "repeat": 64,
           "name": "Step Value",
           "type": "integer"
@@ -764,7 +939,6 @@ Field Pattern | Type | Description
 
 ```js
 {
-	"byte": 268,
 	"length": 6,
 	"name": "Part 1 Parameters ",
 	"schema": {
@@ -775,33 +949,42 @@ Field Pattern | Type | Description
 
 ##### <a name="byteLengthExplanation"></a>Byte Length Explanation
 In an effort to make reading and writing bit data into bytes without effecting other bits the MIS schema defines a way to reach indivdual bits and the lengths needed.
-Bytes and Lengths can have a decimal point value up to 7 which reads the bits 0-7 of a given byte
 
-A common example is series of on/off switches such as - although this would be handled by Byte Length bit parameters normally.
+A common example is series of on/off switches such as.
 
 ```js
 {
-  "byte":10.1,
-  "length":0.1,
-  "name": "Delay BPM Sync Stat",
-  "type": "boolean"
+	"bitParts":[
+		{
+			"bit": 1,
+			"length": 1,
+			"name": "Delay BPM Sync Stat",
+			"type": "boolean"
+		  },
+		  {
+			"bit": 0,
+			"length": 1,
+			"name": "Delay MotionSEQ Stat",
+			"type": "boolean"
+		  }
+	]
 }
 ```
 
-In this example we may recieve byte 10 and it looks like `01111101`. if we break this up into a table:
+In this example we may a recieve byte and it looks like `01111101`. if we break this up into a table:
 
 Bit | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 
 ---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|---
  | 0 | 1 | 1 | 1 | 1 | 1 | 0 | 1
  
-We see that bit 1 is set to 0 (off). So starting from bit 1 (from the point value on the byte variable) and getting the single bit as determined by the length of 0.1 we get the value of zero. It would also be easy to change the value as we know the value is only 1 bit in length and it is placed into bit 1.
+We see that bit 1 (Delay BPM Sync Stat) is set to 0 (off). So starting from bit 1 and getting the single bit as determined by the length of 1 we get the value of zero. It would also be easy to change the value as we know the value is only 1 bit in length and it is placed into bit 1.
 
 
 
 ##### <a name="partExprExplanation"></a>Parts Expression Explanation
 It is hoped that any MIS library or toolset is able to use the Expression set as defined to make the information in stored in Sysex not only readable but also have the ability to be manipulated and changed easily. With this in mind each part has the use of an `expr` and `revExpr` fields to read and modify data.
 
-Note that `$` represents the value of the expression, and `@` represent the current value in the byte(s) returned.
+Note that `$` represents the value of the expression, and `@` represent the current value in the byte(s) returned. Variables set by setVariable will also be available.
 
 Expression are written in normal expression format with bitwise and basic math function:
 * 5 + 4
@@ -863,6 +1046,7 @@ The expressions parser MUST handle the following
 * variables - 
  * $ - the value to be put into the byte(s). Only used in revExpr
  * @ - the value currently in the byte(s)
+ * variables set by setVariable
 
 
 

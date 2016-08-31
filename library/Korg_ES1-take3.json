@@ -1,0 +1,729 @@
+{
+  "MIS": "0.9",
+  "info": {
+    "manufacturer": {
+      "name": "Korg",
+      "id": "42"
+    },
+    "family": {
+      "name": "Electribe",
+      "id": "00"
+    },
+    "model": {
+      "name": "ES-1",
+      "id": "57"
+    },
+    "date": "1999-01-01",
+    "deviceVersions": [
+      "1.6"
+    ],
+    "documentVersion": "0.3",
+    "author": "Andrew Mee <primary.edw@gmail.com>",
+    "contributors": []
+  },
+  "chart": {
+    "midiChannels": {
+      "transmit": true,
+      "recognize": true,
+      "remarks": "Memorized"
+    },
+    "noteNumbers": {
+      "transmit": true,
+      "recognize": true,
+      "remarks": "Specified by Midi Mode for each part"
+    },
+    "programChange": {
+      "transmit": true,
+      "recognize": true,
+      "remarks": "Specified by Midi Mode for each part.  00~3F : A01~64, 40~7F : B01~64"
+    },
+    "mode3": {
+      "transmit": false,
+      "recognize": true
+    },
+    "noteOnVelocity": {
+      "transmit": true,
+      "recognize": true,
+      "transmitRange": [
+        {
+          "start": 30,
+          "stop": 127
+        }
+      ],
+      "recognizeRange": [
+        {
+          "start": 1,
+          "stop": 127
+        }
+      ],
+      "remarks": "Transmitted Velocity is specified by accent amount"
+    },
+    "midiClock": {
+      "transmit": true,
+      "recognize": true,
+      "remarks": "*1"
+    },
+    "activeSense": {
+      "transmit": true,
+      "recognize": true
+    },
+    "songPos": {
+      "transmit": true,
+      "recognize": true,
+      "remarks": "Only in Song Mode *1"
+    },
+    "songSelect": {
+      "transmit": true,
+      "recognize": true,
+      "transmitRange": [
+        {
+          "start": 0,
+          "stop": 15
+        }
+      ],
+      "recognizeRange": [
+        {
+          "start": 0,
+          "stop": 15
+        }
+      ]
+    },
+    "start": {
+      "transmit": true,
+      "recognize": true
+    },
+    "continue": {
+      "transmit": true,
+      "recognize": true
+    },
+    "stop": {
+      "transmit": true,
+      "recognize": true
+    }
+  },
+  "controllers": {
+    "CC": {
+      "121": {
+        "transmit": false,
+        "recognize": true
+      }
+    },
+    "NRPN": {
+      "05 00": {
+        "name": "Part 1 Pitch",
+        "transmit": true,
+        "recognize": true,
+        "max": 127,
+        "MSBOnly": true
+      },
+      "05 01": {
+        "name": "Part 1 Level",
+        "transmit": true,
+        "recognize": true,
+        "max": 127,
+        "MSBOnly": true
+      },
+      "05 02": {
+        "name": "Part 1 Filter",
+        "transmit": true,
+        "recognize": true,
+        "max": 127,
+        "MSBOnly": true
+      },
+      "05 03": {
+        "name": "Part 1 Pan",
+        "transmit": true,
+        "recognize": true,
+        "max": 127,
+        "MSBOnly": true
+      },
+      "05 04": {
+        "name": "Part 1 Effect Send",
+        "transmit": true,
+        "recognize": true,
+        "type": "boolean",
+        "MSBOnly": true
+      },
+      "05 05": {
+        "name": "Part 1 Roll",
+        "transmit": true,
+        "recognize": true,
+        "type": "boolean",
+        "MSBOnly": true
+      },
+      "05 06": {
+        "name": "Part 1 Reverse",
+        "transmit": true,
+        "recognize": true,
+        "type": "boolean",
+        "MSBOnly": true
+      },
+      "05 07": {
+        "name": "Part 1 Motion Seq Type",
+        "transmit": true,
+        "recognize": true,
+        "map": [
+          "Off",
+          "Smooth",
+          "TrigHold"
+        ],
+        "MSBOnly": true
+      }
+    }
+  },
+  "sysex": {
+    "deviceEnquiry": {
+      "transmit": false,
+      "recognize": true
+    },
+    "deviceEnquiryVersion": "b(24,8)<<7 + b(32,8) + (b(8,8)<<7 + b(16,8))/10",
+    "masterVolume": {
+      "transmit": false,
+      "recognize": true
+    },
+    "exclusiveHeader": "F0 42 3C 57",
+    "functions": {
+      "10": {
+        "name": "CURRENT PATTERN DATA DUMP REQUEST",
+        "transmit": false,
+        "recognize": true
+      },
+      "11": {
+        "name": "PATTERN WRITE REQUEST",
+        "transmit": false,
+        "recognize": true,
+        "parts": [
+			{}
+          ,{
+            "name": "Destination Program Number",
+            "type": "integer",
+            "max": 127
+          }
+        ]
+      },
+      "21": {
+        "name": "WRITE COMPLETED",
+        "recognize": false,
+        "transmit": true
+      },
+      "22": {
+        "name": "WRITE ERROR",
+        "recognize": false,
+        "transmit": true
+      },
+      "23": {
+        "name": "DATA FORMAT ERROR",
+        "recognize": false,
+        "transmit": true
+      },
+      "24": {
+        "name": "DATA LOAD ERROR",
+        "recognize": false,
+        "transmit": true
+      },
+      "26": {
+        "name": "DATA FORMAT ERROR",
+        "recognize": false,
+        "transmit": true
+      },
+      "40": {
+        "name": "CURRENT PATTERN DATA DUMP",
+        "recognize": true,
+        "transmit": true,
+        "parts": [
+          {
+            "length": 2,
+            "name": "Tempo",
+            "type": "float",
+            "expr":"(0b10 & @) >> 1",
+			"revExpr":"(@ & 0b1111101 | ($ <<1))",
+            "min": 20,
+            "max": 300
+          },
+          {
+			bitParts:[
+				{
+					"bit": 6,
+					"length":2,
+					"name": "Roll Type",
+					"type": "integer",
+					"offset":1,
+					"max": 3,
+					"min": 1
+				  },
+				  {
+					"bit": 4,
+					"length":2,
+					"name": "Scale/Beat",
+					"type": "integer",
+					"map": [
+					  "16th",
+					  "32nd",
+					  "tri",
+					  "tr2"
+					]
+				  },
+				  {
+					"bit": 1,
+					"length":2,
+					"name": "Pattern Length",
+					"type": "integer",
+					"offset":1,
+					"max": 4,
+					"min": 1
+				  }
+			]
+          }
+          ,{
+            "name": "Swing",
+            "type": "integer",
+            "suffix": "%",
+			"offset":50,
+            "max": 50,
+            "min": 75
+          },
+          {
+            "name": "Effect Type",
+            "type": "integer",
+            "max": 10,
+            "map": [
+              "Flanger/Chorus",
+              "Phaser",
+              "Ring Modulation",
+              "Pitch Shifter",
+              "Compressor",
+              "Distortion",
+              "Decimator",
+              "Isolator",
+              "Resonance Filter",
+              "Wah"
+            ]
+          },
+          {
+            "name": "Effect Edit 1",
+            "type": "integer",
+            "max": 127
+          },
+          {
+            "name": "Effect Edit 2",
+            "type": "integer",
+            "max": 127
+          },
+          {
+            "name": "Effect MotionSEQ Stat",
+            "type": "integer",
+            "max": 1
+          },
+          {
+            "name": "Delay Depth",
+            "type": "integer",
+            "max": 127
+          },
+          {
+            "name": "Delay Time",
+            "type": "integer",
+            "max": 127
+          },
+          {
+			bitParts:[
+				{
+					"bit": 1,
+					"length": 1,
+					"name": "Delay BPM Sync Stat",
+					"type": "boolean"
+				  },
+				  {
+					"bit": 0,
+					"length": 1,
+					"name": "Delay MotionSEQ Stat",
+					"type": "boolean"
+				  }
+			]
+		}
+         ,{
+			bitParts:[
+				{
+					"bit": 6,
+					"length": 6,
+					"name": "Accent Level",
+					"type": "integer",
+				  },
+				  {
+					"bit": 7,
+					"length": 1,
+					"name": "Accent Motion SEQ Stat",
+					"type": "boolean"
+				  }
+			]
+          }
+          ,{
+            "repeat": 64,
+            "name": "Fx Edit 1 MotionSEQ Data",
+            "type": "integer",
+            "max": 127
+          },
+          {
+            "repeat": 64,
+            "name": "Fx Edit 2 MotionSEQ Data",
+            "type": "integer",
+            "max": 127
+          },
+          {
+            "repeat": 64,
+            "name": "Delay Depth MotionSEQ Data",
+            "type": "integer",
+            "max": 127
+          },
+          {
+            "repeat": 64,
+            "name": "Delay Time MotionSEQ Data",
+            "type": "integer",
+            "max": 127
+          },
+          {
+            "length": 128,
+            "repeat": 10,
+            "name": "Parts",
+            "repeatTitles": [
+              "Part 1",
+              "Part 2",
+              "Part 3",
+              "Part 4",
+              "Part 5",
+              "Part 6A",
+              "Part 6B",
+              "Part 7A",
+              "Part 7B",
+              "Slice"
+            ],
+            "parts": [
+              {
+                "name": "Parameters",
+                "length": 6,
+                "schema": {
+                  "$ref": "#/sysexDefinitions/parameters"
+                }
+              },
+              {
+                "length": 8,
+                "name": "StepSequence Data",
+                "schema": {
+                  "$ref": "#/sysexDefinitions/stepSequence"
+                }
+              },
+              {
+                "length": 114,
+                "name": "MotionSequence Data ",
+                "schema": {
+                  "$ref": "#/sysexDefinitions/motionSequence"
+                }
+              }
+            ]
+          },
+          {
+            "name": "Audio In Parameters",
+            "length": 5,
+            "schema": {
+              "$ref": "#/sysexDefinitions/audioParameters"
+            }
+          },
+          {
+            "name": "Audio In StepSequence Data",
+            "length": 5,
+            "schema": {
+              "$ref": "#/sysexDefinitions/stepSequence"
+            }
+          },
+          {
+            "name": "Audio In MotionSequence Data",
+            "length": 5,
+            "schema": {
+              "$ref": "#/sysexDefinitions/audioMotionSequence"
+            }
+          },
+          {
+            "name": "Accent StepSequence Data",
+            "length": 5,
+            "schema": {
+              "$ref": "#/sysexDefinitions/stepSequence"
+            }
+          },
+          {
+            "name": "Accent MotionSequence Data",
+            "length": 5,
+            "schema": {
+              "$ref": "#/sysexDefinitions/accentMotionSequence"
+            }
+          }
+        ]
+      },
+      "51": {
+        "name": "GLOBAL DATA DUMP",
+        "transmit": true,
+        "recognize": true,
+        "parts": [
+          {
+            "name": "Midi CH ",
+            "max": 16,
+            "min": 1,
+            "offset":1
+          },
+          {
+            "name": "Metronome",
+            "max": 4,
+            "map": [
+              "Off",
+              "r-0",
+              "r-1",
+              "r-2",
+              "On"
+            ]
+          },
+          {
+            "name": "Write Protect ",
+            "type": "boolean"
+          },
+          {
+            "name": "Part 1 Note Number",
+            "format": "note",
+            "type": "integer",
+            "max": 127
+          },
+          {
+            "name": "Part 2 Note Number",
+            "format": "note",
+            "type": "integer",
+            "max": 127
+          },
+          {
+            "name": "Part 3 Note Number",
+            "format": "note",
+            "type": "integer",
+            "max": 127
+          },
+          {
+            "name": "Part 4 Note Number",
+            "format": "note",
+            "type": "integer",
+            "max": 127
+          },
+          {
+            "name": "Part 5 Note Number",
+            "format": "note",
+            "type": "integer",
+            "max": 127
+          },
+          {
+            "name": "Part 6A Note Number",
+            "format": "note",
+            "type": "integer",
+            "max": 127
+          },
+          {
+            "name": "Part 6B Note Number",
+            "format": "note",
+            "type": "integer",
+            "max": 127
+          },
+          {
+            "name": "Part 7A Note Number",
+            "format": "note",
+            "type": "integer",
+            "max": 127
+          },
+          {
+            "name": "Part 7B Note Number",
+            "format": "note",
+            "type": "integer",
+            "max": 127
+          },
+          {
+            "name": "Slice Note Number",
+            "format": "note",
+            "type": "integer",
+            "max": 127
+          },
+          {
+            "name": "Audio In Note Number",
+            "format": "note",
+            "type": "integer",
+            "max": 127
+          },
+          {
+            "name": "Clock",
+            "type": "boolean"
+          },
+          {
+            "byte": 15,
+            "name": "Clock",
+            "type": "integer",
+            "map": [
+              "Int",
+              "Ext"
+            ]
+          },
+          {
+			length:49
+          },
+          {
+            "length": 1,
+            "repeat": 64,
+            "type": "integer",
+            "name": "Pattern Set Parameters",
+            "max": 127
+          }
+        ]
+      },
+      "57": {
+        "name": "ALL SONG DATA DUMP",
+        "recognize": true,
+        "transmit": true,
+        "parts": []
+      },
+      "58": {
+        "name": "CURRENT SONG DATA DUMP",
+        "recognize": true,
+        "transmit": true,
+        "parts": []
+      },
+      "1C": {
+        "name": "ALL PATTERN DATA DUMP REQUEST",
+        "recognize": true,
+        "transmit": false
+      },
+      "0A": {
+        "name": "CURRENT SONG DATA DUMP REQUEST",
+        "recognize": true,
+        "transmit": false
+      },
+      "0B": {
+        "name": "All SONG DATA DUMP REQUEST",
+        "recognize": true,
+        "transmit": false
+      },
+      "0E": {
+        "name": "GLOBAL DATA DUMP REQUEST",
+        "recognize": true,
+        "transmit": false
+      },
+      "1A": {
+        "name": "SONG WRITE REQUEST",
+        "recognize": true,
+        "transmit": false,
+        "parts": [
+          {
+            "byte": 0,
+            "name": "Destination Song No(0~15)",
+            "type": "integer",
+            "max": 15
+          }
+        ]
+      },
+      "4C": {
+        "name": "ALL PATTERN DATA DUMP",
+        "recognize": true,
+        "transmit": true,
+        "parts": []
+      }
+    },
+    "definitions": {
+      "motionSequence": [
+        {
+          "byte": 0.7,
+          "length": 0.1,
+          "repeat": 64,
+          "name": "Step",
+          "type": "boolean"
+        },
+        {
+          "byte": 0.6,
+          "length": 0.6,
+          "repeat": 64,
+          "name": "Step Value",
+          "type": "integer"
+        }
+      ],
+      "stepSequence": [
+        {
+          "byte": 0.0,
+          "length": 0.1,
+          "name": "Step 1",
+          "type": "boolean"
+        }
+      ],
+      "parameters": [
+        {
+          "byte": 0.7,
+          "length": 0.1,
+          "name": "Sample Mono/Stereo",
+          "type": "integer",
+          "map": [
+            "mono",
+            "stereo"
+          ]
+        },
+        {
+          "byte": 0.6,
+          "length": 0.6,
+          "name": "Sample No.",
+          "type": "integer",
+          "max": 99
+        },
+        {
+          "byte": 2,
+          "name": "Filter",
+          "type": "integer",
+          "max": 127,
+          "x-connection": "#/controllers/NRPN/0x05/{#*8+2}"
+        },
+        {
+          "byte": 3,
+          "name": "Level",
+          "type": "integer",
+          "max": 127,
+          "x-connection": "#/controllers/NRPN/0x05/{#*8+1}"
+        },
+        {
+          "byte": 3,
+          "name": "Panpot",
+          "type": "integer",
+          "max": 127,
+          "x-connection": "#/controllers/NRPN/0x05/{#*8+3}"
+        },
+        {
+          "byte": 4,
+          "name": "Pitch",
+          "type": "integer",
+          "max": 127,
+          "x-connection": "#/controllers/NRPN/0x05/{#*8}"
+        },
+        {
+          "byte": 5.7,
+          "length": 0.1,
+          "name": "Sample Use",
+          "type": "boolean"
+        },
+        {
+          "byte": 5.2,
+          "length": 0.1,
+          "name": "Reversed",
+          "x-connection": "#/controllers/NRPN/0x05/{#*8+6}"
+        },
+        {
+          "byte": 5.1,
+          "length": 0.1,
+          "name": "Roll",
+          "type": "boolean",
+          "x-connection": "#/controllers/NRPN/0x05/{#*8+5}"
+        },
+        {
+          "byte": 5.0,
+          "length": 0.1,
+          "name": "Effect",
+          "type": "boolean",
+          "x-connection": "#/controllers/NRPN/0x05/{#*8+4}"
+        }
+      ]
+    }
+  }
+}
