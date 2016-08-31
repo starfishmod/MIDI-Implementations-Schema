@@ -103,7 +103,7 @@ The object provides metadata about the implementation.
 
 Field Name | Type | Description
 ---|:---:|---
-<a name="infoManufacturer"></a>manufacturer | [nameID Object](#nameIDObject) | **Required.** The manufactuer of the device. The ID refers to the ID as listed [MANUFACTURER SYSEX ID NUMBERS](https://www.midi.org/specifications/item/manufacturer-id-numbers) and the [Device Enquiry](#deviceEnquiry). When the Manufactuer id is a 2 byte Id it should list as `"05 C4"`
+<a name="infoManufacturer"></a>manufacturer | [nameID Object](#nameIDObject) | **Required.** The manufactuer of the device. The ID refers to the ID as listed [MANUFACTURER SYSEX ID NUMBERS](https://www.midi.org/specifications/item/manufacturer-id-numbers) and the [Device Enquiry](#deviceEnquiry). When the Manufactuer id is a 2 byte Id such as `"05 C4"` it should be the integer equivalent i.e. `1476`
 <a name="infoFamily"></a>family | [nameID Object](#nameIDObject) | The family of the device. The id refers to data from the [Device Enquiry](#deviceEnquiry)
 <a name="infoFamily"></a>model | [nameID Object](#nameIDObject) | **Required.** The model of the device. The id refers to data from the [Device Enquiry](#deviceEnquiry)
 <a name="infoDate"></a>date | `string` | **Required.** The date of this MIS.
@@ -124,15 +124,15 @@ Field Pattern | Type | Description
 {
     "manufacturer": {
       "name": "Korg",
-      "id": "42"
+      "id": 66
     },
     "family": {
       "name": "Electribe",
-      "id": "00"
+      "id": 0
     },
     "model": {
       "name": "ES-1",
-      "id": "57"
+      "id": 87
     },
     "date": "1999-01-01",
     "deviceVersions": [
@@ -154,7 +154,7 @@ Simple object for holding a name and ID value.
 Field Name | Type | Description
 ---|:---:|---
 <a name="nameIDName"></a>name | `string` | **Required.** The identifying name of the object.
-<a name="nameIDID"></a>id | `string` | The id in hex of the name used as reference
+<a name="nameIDID"></a>id | `integer` | The id name used as reference
 
 ##### Patterned Objects 
 
@@ -167,7 +167,7 @@ Field Pattern | Type | Description
 ```js
 {
   "name": "Korg",
-  "id": "42"
+  "id": 66
 }
 ```
 
@@ -362,8 +362,8 @@ Object for describing program changes and voicelists.
 
 Field Name | Type | Description
 ---|:---:|---
-<a name="bankProgramChange"></a>PC | [[numberList Object](#pcListObject)] | A description of each program
-<a name="bankVoiceBanks"></a>voiceBanks | [[voiceBanks Object](#voiceBanksObject)] | A description of each voice bank
+<a name="bankProgramChange"></a>PC | [numberList Object](#pcListObject) | A description of each program
+<a name="bankVoiceBanks"></a>voiceBanks | [voiceBanks Object](#voiceBanksObject) | A description of each voice bank
 
 ##### Patterned Objects 
 
@@ -724,14 +724,14 @@ Field Name | Type | Description
 <a name="partsName"></a>name | `string` | The name of this value that is being read or sent.
 <a name="partsLength"></a>length | `integer` | How many bytes to read. If not set it is assumed to only read 1 byte. 
 <a name="partsLengthExpr"></a>lengthExpr | `string` | How many bytes to read, but use an expression to deteremine the length. This is useful if one part of the sysex tells you the length of a sample for example.
-<a name="partsIfExpr"></a>ifExpr | `string` | Use an expression to determin if this should be read.
+<a name="partsIfExpr"></a>ifExpr | `string` | Use an expression to determin if this should be read. If false do not move to the next byte
 <a name="partsSetVariable"></a>setVariable | `string` | Set the value read to a global variable that can be used in expressions.  Variables MUST match the regexp /[a-z][a-z0-9]*/i
 <a name="partsType"></a>type | `string` | The value MUST be one of `"string"`, `"number"`, `"integer"` or `"boolean"`. If not set integer is assumed.
 <a name="partsFormat"></a>format | `string` | this is the format of the data returned. i.e. `note`.
 <a name="partsRepeat"></a>repeat | `integer` | How many times are we going to read this byte and length. This is useful where the docmentation ask to read x amount of the same param
 <a name="partsRepeatTitles"></a>repeatTitles | [`string`] | The title of each repeat. The length of this array MUST match the repeat value.
 <a name="partsSuffix"></a>suffix | `string` | This helps for human readability when display the data. e.g. '%'
-<a name="partsoffset"></a>offset | `string` | This will adjust the vale for visual display. 
+<a name="partsoffset"></a>offset | `string` | This will adjust the value for visual display. 
 <a name="partsExpr"></a>expr | `string` | The expression to determine the values from the data. This MUST not be used with addValue. An expression MUST have a revExpr [See more](#partExprExplanation) below.
 <a name="partsRevExpr"></a>revExpr | `string` | The expression to determine the data from the values. [See more](#partExprExplanation) below.
 <a name="partsMin"></a>min | `integer` | The minimum number that should be set. Min is checked before after expr and before revExpr.
@@ -836,7 +836,7 @@ Field Name | Type | Description
 <a name="bitPartsRepeat"></a>repeat | `integer` | How many times are we going to read this byte and length. This is useful where the docmentation ask to read x amount of the same param
 <a name="bitPartsRepeatTitles"></a>repeatTitles | [`string`] | The title of each repeat. The length of this array MUST match the repeat value.
 <a name="bitPartsSuffix"></a>suffix | `string` | This helps for human readability when display the data. e.g. '%'
-<a name="bitPartsoffset"></a>offset | `string` | This will adjust the vale for visual display. 
+<a name="bitPartsoffset"></a>offset | `string` | This will adjust the value for visual display. 
 <a name="bitPartsExpr"></a>expr | `string` | The expression to determine the values from the data. This MUST not be used with addValue. An expression MUST have a revExpr [See more](#partExprExplanation) below.
 <a name="bitPartsRevExpr"></a>revExpr | `string` | The expression to determine the data from the values. [See more](#partExprExplanation) below.
 <a name="bitPartsMin"></a>min | `integer` | The minimum number that should be set. Min is checked before after expr and before revExpr.

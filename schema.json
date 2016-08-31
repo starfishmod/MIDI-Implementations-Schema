@@ -18,7 +18,7 @@
     "MIS": {
       "type": "string",
       "enum": [
-        "0.9"
+        "0.9.1"
       ],
       "description": "The MIS version of this document."
     },
@@ -27,6 +27,9 @@
     },
     "chart": {
       "$ref": "#/definitions/chart"
+    },
+    "banks": {
+      "$ref": "#/definitions/banks"
     },
     "controllers": {
       "$ref": "#/definitions/controllers"
@@ -104,9 +107,8 @@
           "description": "The identifying name of the object."
         },
         "id": {
-          "type": "string",
-          "description": "The id of the name used as reference",
-          "format": "hex"
+          "type": "integer",
+          "description": "The id of the name used as reference"
         }
       },
       "patternProperties": {
@@ -242,6 +244,78 @@
         }
       }
     },
+    
+    
+    "banks":{
+		"type": "object",
+		"additionalProperties": false,
+		"properties": {
+			"PC": {
+			  "$ref": "#/definitions/numberList"
+			},
+			"voiceBanks": {
+			  "$ref": "#/definitions/voiceBanks"
+			}
+		},
+		"patternProperties": {
+			"^x-": {
+			  "$ref": "#/definitions/vendorExtension"
+			}
+		}
+    },
+    "voiceList":{
+		"type": "object",
+		"additionalProperties": false,
+		"properties": {
+			"name": {
+			  "type": "string"
+			},
+			"voices": {
+			  "$ref": "#/definitions/numberList"
+			},
+			"drummaps": {
+			  "$ref": "#/definitions/voiceBanks"
+			}
+		},
+		"patternProperties": {
+			"^x-": {
+			  "$ref": "#/definitions/vendorExtension"
+			}
+		}
+    },
+    "voiceBanks":{
+		"type": "object",
+		"additionalProperties": false,
+		"patternProperties": {
+			"^(1[10][0-9]|12[0-7]|[0-9]{1,2})$": {
+				"$ref": "#/definitions/voiceList"
+			},
+			"^x-": {
+			  "$ref": "#/definitions/vendorExtension"
+			}
+		}
+    },
+    "numberList":{
+		"type": "object",
+		"additionalProperties": false,
+		"patternProperties": {
+			"^(1[10][0-9]|12[0-7]|[0-9]{1,2})$": {
+				"type": "string"
+			},
+			"^x-": {
+			  "$ref": "#/definitions/vendorExtension"
+			}
+		}
+    },
+    
+    
+    
+    
+    
+    
+    
+    
+    
     "controllers": {
       "type": "object",
       "additionalProperties": false,
@@ -356,7 +430,7 @@
         "^x-": {
           "$ref": "#/definitions/vendorExtension"
         },
-        "^[0-9]{1,3}": {
+        "^(1[10][0-9]|12[0-7]|[0-9]{1,2})$": {
           "$ref": "#/definitions/recognizeTransmit"
         }
       },
@@ -369,7 +443,7 @@
         "^x-": {
           "$ref": "#/definitions/vendorExtension"
         },
-        "^[0-9a-f]{2} [0-9a-f]{2}": {
+        "^(1[10][0-9]|12[0-7]|[0-9]{1,2})\/(1[10][0-9]|12[0-7]|[0-9]{1,2})$": {
           "$ref": "#/definitions/NRPNItem"
         }
       },
@@ -476,9 +550,11 @@
           "$ref": "#/definitions/recognizeTransmit"
         },
         "exclusiveHeader": {
-          "type": "string",
-          "format": "hex",
-          "description": "This is the header used on all Sysex queries. This will be an string of hex e.g. \"F0 42 3C 57\""
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "description": "This is the header used on all Sysex queries. This will be an array of integers e.g. \"F0 42 3C 57\" becomes [240,66,60,87]"
         },
         
         "functions": {
@@ -501,7 +577,7 @@
         "^x-": {
           "$ref": "#/definitions/vendorExtension"
         },
-        "^[0-9A-F]{2}": {
+        "^(1[10][0-9]|12[0-7]|[0-9]{1,2})$": {
           "$ref": "#/definitions/sysexFunctionItem"
         }
       },
@@ -564,27 +640,29 @@
     "parts": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "byte",
-        "name"
-      ],
       "patternProperties": {
         "^x-": {
           "$ref": "#/definitions/vendorExtension"
         }
       },
       "properties": {
-        "byte": {
-          "type": "integer",
-          "description": "The byte count after the ExclusiveHeader and the Function Id starting from 0 that you wish to read"
+        "name": {
+          "type": "string",
+          "description": "How many bytes to read. If not set it is assumed to only read 1 byte."
         },
         "length": {
           "type": "integer",
           "description": "How many bytes to read. If not set it is assumed to only read 1 byte."
         },
-        "name": {
+        "lengthExpr": {
           "type": "string",
-          "description": "How many bytes to read. If not set it is assumed to only read 1 byte."
+          "format": "expr",
+          "description": "The expression to determine the length to get from the data"
+        },
+        "ifExpr": {
+          "type": "string",
+          "format": "expr",
+          "description": "The expression to determine if we should retrieve this data - if false do not move to the next byte"
         },
         "type": {
           "type": "string",
@@ -599,6 +677,25 @@
          "format": {
           "type": "string",
           "description": "This is the format of the data returned. i.e. note."
+        },
+        "repeat": {
+          "type": "integer",
+          "description": "How many times are we going to read this byte and length. This is useful where the docmentation ask to read x amount of the same param."
+        },
+        "repeatTitles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "The title of each repeat. The length of this array MUST match the repeat value."
+        },
+        "suffix": {
+          "type": "string",
+          "description": "This helps for human readability when display the data."
+        },
+        "offset": {
+          "type": "integer",
+          "description": "This will adjust the value for visual display."
         },
         "expr": {
           "type": "string",
@@ -625,6 +722,74 @@
           },
           "description": "Map the value to this array of Strings to make it more human friendly."
         },
+        
+        "parts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/parts"
+          },
+          "description": "This is required if the type is set to array."
+        },
+        "bitParts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/bitParts"
+          },
+          "description": "Break down the value into indiviual bit ranges."
+        },
+        
+        "schema": {
+          "$ref": "#/definitions/schema"
+        }
+      }
+    },
+    
+    
+    
+    
+    
+    "bitParts": {
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^x-": {
+          "$ref": "#/definitions/vendorExtension"
+        }
+      },
+      "required":["bit","length"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of value"
+        },
+        "start": {
+          "type": "integer",
+          "description": "Start reading bits from."
+        },
+        "length": {
+          "type": "integer",
+          "description": "How many bits to read."
+        },
+        
+        "ifExpr": {
+          "type": "string",
+          "format": "expr",
+          "description": "The expression to determine if we should retrieve this data - if false do not move to the next byte"
+        },
+        "type": {
+          "type": "string",
+          "description": "The value MUST be one of \"string\", \"number\", \"integer\" or \"boolean\". If not set integer is assumed.",
+          "enum": [
+            "string",
+            "number",
+            "integer",
+            "boolean"
+          ]
+        },
+         "format": {
+          "type": "string",
+          "description": "This is the format of the data returned. i.e. note."
+        },
         "repeat": {
           "type": "integer",
           "description": "How many times are we going to read this byte and length. This is useful where the docmentation ask to read x amount of the same param."
@@ -636,22 +801,49 @@
           },
           "description": "The title of each repeat. The length of this array MUST match the repeat value."
         },
-        "parts": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/parts"
-          },
-          "description": "This is required if the type is set to array."
-        },
         "suffix": {
           "type": "string",
           "description": "This helps for human readability when display the data."
         },
-        "schema": {
-          "$ref": "#/definitions/schema"
+        "offset": {
+          "type": "integer",
+          "description": "This will adjust the value for visual display."
+        },
+        "expr": {
+          "type": "string",
+          "format": "expr",
+          "description": "The expression to determine the values from the data"
+        },
+        "revExpr": {
+          "type": "string",
+          "format": "expr",
+          "description": "The expression to determine the data from the values"
+        },
+        "max": {
+          "type": "integer",
+          "description": "The maximum number that should be set. Max is checked before after expr and before revExpr."
+        },
+        "min": {
+          "type": "integer",
+          "description": "The minimum number that should be set. Min is checked before after expr and before revExpr."
+        },
+        "map": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Map the value to this array of Strings to make it more human friendly."
         }
+        
+        
+        
+       
       }
     },
+    
+    
+    
+    
     "vendorExtension": {
       "description": "Any property starting with x- is valid.",
       "additionalProperties": true,
