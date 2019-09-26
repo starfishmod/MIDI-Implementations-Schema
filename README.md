@@ -22,4 +22,4 @@ A library of various equipment will also be available. This repository will also
 
 
 ## Sponsored
-This work is currently supported by MODR
+This work is currently supported by (MiPex)[https://mipex.io]
