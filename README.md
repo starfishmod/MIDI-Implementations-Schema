@@ -1,5 +1,7 @@
 # MIDI-Implementations-Schema
 
+## please note that this project is deprecated. Please look to using [MIDI-CI Property Exchange](https://www.midi.org/articles-old/details-about-midi-2-0-midi-ci-profiles-and-property-exchange) as the method to provide information about your MIDI device.
+
 
 The goal of the MIDI Implementations Schema (MIS) is to provide an open standard method to describe MIDI implementations and Sysex for any device. Allowing humans and computers to understand how to interface and see what capabilities their equipment has.
 
